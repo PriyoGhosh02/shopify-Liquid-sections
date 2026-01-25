@@ -1,0 +1,662 @@
+{% comment %}
+  Expert Testimonials Section
+  Features:
+  - Video or Image content support
+  - Clickable profile tabs
+  - Auto-play videos
+  - Fully responsive
+  - Multiple testimonials
+{% endcomment %}
+
+<style>
+  .testimonial-section-{{ section.id }} {
+    padding: 40px 20px;
+    background-color: {{ section.settings.bg_color }};
+  }
+  
+  .testimonial-container-{{ section.id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  /* Media Content Area */
+  .media-wrapper-{{ section.id }} {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    aspect-ratio: 3/4;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid {{ section.settings.border_color }};
+  }
+  
+  .media-content-{{ section.id }} {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+  }
+  
+  .media-content-{{ section.id }}.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .media-content-{{ section.id }} img,
+  .media-content-{{ section.id }} video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .video-controls-{{ section.id }} {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 10;
+  }
+  
+  .play-btn-{{ section.id }} {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, opacity 0.2s;
+    opacity: 0.9;
+  }
+  
+  .play-btn-{{ section.id }}:hover {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  
+  .play-btn-{{ section.id }} .play-icon,
+  .play-btn-{{ section.id }} .pause-icon {
+    display: none;
+  }
+  
+  .play-btn-{{ section.id }}.playing .pause-icon {
+    display: block;
+  }
+  
+  .play-btn-{{ section.id }}:not(.playing) .play-icon {
+    display: block;
+  }
+  
+  .mute-btn-{{ section.id }} {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: background-color 0.2s;
+    z-index: 10;
+  }
+  
+  .mute-btn-{{ section.id }}:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  
+  .mute-btn-{{ section.id }} .unmuted-icon,
+  .mute-btn-{{ section.id }} .muted-icon {
+    display: none;
+  }
+  
+  .mute-btn-{{ section.id }}.unmuted .unmuted-icon {
+    display: block;
+  }
+  
+  .mute-btn-{{ section.id }}.muted .muted-icon {
+    display: block;
+  }
+  
+  /* Content Area */
+  .content-wrapper-{{ section.id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Profile Tabs */
+  .profile-tabs-{{ section.id }} {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 20px 0;
+  }
+  
+  .profile-tab-{{ section.id }} {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background: none;
+    position: relative;
+  }
+  
+  .profile-tab-{{ section.id }}:hover {
+    transform: scale(1.05);
+  }
+  
+  .profile-tab-{{ section.id }}.active {
+    border-color: {{ section.settings.active_border_color }};
+    transform: scale(1.05);
+  }
+  
+  .profile-tab-{{ section.id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  .profile-tab-{{ section.id }} .play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .profile-tab-{{ section.id }}:hover .play-overlay {
+    opacity: 1;
+  }
+  
+  .profile-tab-{{ section.id }} .play-overlay svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+  }
+  
+  /* Testimonial Content */
+  .testimonial-content-{{ section.id }} {
+    display: none;
+  }
+  
+  .testimonial-content-{{ section.id }}.active {
+    display: block;
+    animation: fadeIn-{{ section.id }} 0.4s ease-in-out;
+  }
+  
+  @keyframes fadeIn-{{ section.id }} {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .quote-text-{{ section.id }} {
+    font-size: 20px;
+    line-height: 1.6;
+    font-weight: 300;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 20px;
+  }
+  
+  .author-name-{{ section.id }} {
+    font-size: 18px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: {{ section.settings.text_color }};
+    margin-bottom: 8px;
+  }
+  
+  .author-title-{{ section.id }} {
+    font-size: 16px;
+    font-weight: 300;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+  }
+  
+  /* Desktop Layout */
+  @media (min-width: 992px) {
+    .testimonial-container-{{ section.id }} {
+      flex-direction: row;
+      gap: 60px;
+      align-items: flex-start;
+    }
+    
+    .media-wrapper-{{ section.id }} {
+      max-width: 380px;
+      flex-shrink: 0;
+    }
+    
+    .profile-tabs-{{ section.id }} {
+      justify-content: flex-start;
+    }
+    
+    .profile-tab-{{ section.id }} {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .quote-text-{{ section.id }} {
+      font-size: 28px;
+    }
+    
+    .author-name-{{ section.id }} {
+      font-size: 20px;
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 991px) {
+    .profile-tab-{{ section.id }} {
+      width: 70px;
+      height: 70px;
+    }
+    
+    .quote-text-{{ section.id }} {
+      font-size: 24px;
+    }
+  }
+</style>
+
+<section class="testimonial-section-{{ section.id }}" id="testimonial-section-{{ section.id }}">
+  <div class="testimonial-container-{{ section.id }}">
+    
+    <!-- Left Side: Media Content -->
+    <div class="media-wrapper-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="media-content-{{ section.id }} {% if forloop.first %}active{% endif %}" 
+             data-testimonial="{{ forloop.index }}"
+             data-section="{{ section.id }}">
+          
+          {% if block.settings.media_type == 'video' and block.settings.video_url != blank %}
+            <video 
+              id="video-{{ section.id }}-{{ forloop.index }}"
+              playsinline 
+              loop 
+              muted
+              {% if forloop.first %}autoplay{% endif %}
+              poster="{{ block.settings.profile_image | image_url: width: 800 }}"
+              preload="metadata">
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+            
+            <div class="video-controls-{{ section.id }}">
+              <button class="play-btn-{{ section.id }} {% if forloop.first %}playing{% endif %}" 
+                      data-video-index="{{ forloop.index }}"
+                      data-section="{{ section.id }}"
+                      aria-label="Play/Pause">
+                <svg class="play-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M5 3L17 10L5 17V3Z"/>
+                </svg>
+                <svg class="pause-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <rect x="5" y="3" width="4" height="14"/>
+                  <rect x="11" y="3" width="4" height="14"/>
+                </svg>
+              </button>
+            </div>
+            
+            <button class="mute-btn-{{ section.id }} muted" 
+                    data-video-index="{{ forloop.index }}"
+                    data-section="{{ section.id }}"
+                    aria-label="Mute/Unmute">
+              <svg class="unmuted-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+              </svg>
+              <svg class="muted-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M19.07 4.93l-1.41 1.41A7 7 0 0119 12a7 7 0 01-1.34 4.66l1.41 1.41A9 9 0 0021 12a9 9 0 00-1.93-5.07z" fill="currentColor"/>
+              </svg>
+            </button>
+          
+          {% elsif block.settings.profile_image %}
+            <img 
+              src="{{ block.settings.profile_image | image_url: width: 800 }}" 
+              alt="{{ block.settings.author_name }}"
+              loading="lazy"
+              width="800"
+              height="1066">
+          {% else %}
+            <div style="width: 100%; height: 100%; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+              <span style="color: #999;">No media selected</span>
+            </div>
+          {% endif %}
+          
+        </div>
+      {% endfor %}
+    </div>
+    
+    <!-- Right Side: Content -->
+    <div class="content-wrapper-{{ section.id }}">
+      
+      <!-- Profile Tabs -->
+      <div class="profile-tabs-{{ section.id }}">
+        {% for block in section.blocks %}
+          <button 
+            class="profile-tab-{{ section.id }} {% if forloop.first %}active{% endif %}"
+            data-tab="{{ forloop.index }}"
+            data-section="{{ section.id }}"
+            aria-label="View testimonial from {{ block.settings.author_name }}"
+            aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+            {% if block.settings.profile_image %}
+              <img 
+                src="{{ block.settings.profile_image | image_url: width: 200 }}" 
+                alt="{{ block.settings.author_name }}"
+                loading="lazy"
+                width="200"
+                height="200">
+            {% else %}
+              <div style="width: 100%; height: 100%; background: #f0f0f0; border-radius: 50%;"></div>
+            {% endif %}
+            
+            {% if block.settings.media_type == 'video' and block.settings.video_url != blank %}
+              <div class="play-overlay">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M5 3L17 10L5 17V3Z"/>
+                </svg>
+              </div>
+            {% endif %}
+          </button>
+        {% endfor %}
+      </div>
+      
+      <!-- Testimonial Content -->
+      <div class="testimonial-text-wrapper-{{ section.id }}">
+        {% for block in section.blocks %}
+          <div class="testimonial-content-{{ section.id }} {% if forloop.first %}active{% endif %}"
+               data-content="{{ forloop.index }}"
+               data-section="{{ section.id }}"
+               role="tabpanel"
+               aria-labelledby="tab-{{ forloop.index }}">
+            
+            <p class="quote-text-{{ section.id }}">
+              "{{ block.settings.quote_text }}"
+            </p>
+            
+            <p class="author-name-{{ section.id }}">
+              {{ block.settings.author_name }}
+            </p>
+            
+            <p class="author-title-{{ section.id }}">
+              {{ block.settings.author_title }}
+            </p>
+            
+          </div>
+        {% endfor %}
+      </div>
+      
+    </div>
+    
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  
+  var sectionId = '{{ section.id }}';
+  var activeIndex = 1;
+  
+  // Get all elements
+  var profileTabs = document.querySelectorAll('.profile-tab-{{ section.id }}');
+  var mediaContents = document.querySelectorAll('.media-content-{{ section.id }}');
+  var testimonialContents = document.querySelectorAll('.testimonial-content-{{ section.id }}');
+  var playButtons = document.querySelectorAll('.play-btn-{{ section.id }}');
+  var muteButtons = document.querySelectorAll('.mute-btn-{{ section.id }}');
+  
+  // Function to switch testimonial
+  function switchTestimonial(newIndex) {
+    if (newIndex === activeIndex) return;
+    
+    // 1. Pause current video if playing
+    var currentVideo = document.getElementById('video-{{ section.id }}-' + activeIndex);
+    if (currentVideo) {
+      currentVideo.pause();
+    }
+    
+    // 2. Remove active class from current tab
+    profileTabs.forEach(function(tab) {
+      tab.classList.remove('active');
+      tab.setAttribute('aria-pressed', 'false');
+    });
+    
+    // 3. Add active class to new tab
+    var newTab = document.querySelector('.profile-tab-{{ section.id }}[data-tab="' + newIndex + '"]');
+    if (newTab) {
+      newTab.classList.add('active');
+      newTab.setAttribute('aria-pressed', 'true');
+    }
+    
+    // 4. Hide all media contents
+    mediaContents.forEach(function(media) {
+      media.classList.remove('active');
+      var video = media.querySelector('video');
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+    
+    // 5. Show new media content
+    var newMedia = document.querySelector('.media-content-{{ section.id }}[data-testimonial="' + newIndex + '"]');
+    if (newMedia) {
+      newMedia.classList.add('active');
+      
+      // Auto-play video if exists
+      var newVideo = newMedia.querySelector('video');
+      if (newVideo) {
+        newVideo.muted = true;
+        newVideo.play().then(function() {
+          var playBtn = newMedia.querySelector('.play-btn-{{ section.id }}');
+          if (playBtn) {
+            playBtn.classList.add('playing');
+          }
+        }).catch(function(err) {
+          console.log('Video autoplay failed:', err);
+        });
+        
+        // Update mute button
+        var muteBtn = newMedia.querySelector('.mute-btn-{{ section.id }}');
+        if (muteBtn) {
+          muteBtn.classList.add('muted');
+          muteBtn.classList.remove('unmuted');
+        }
+      }
+    }
+    
+    // 6. Hide all testimonial contents
+    testimonialContents.forEach(function(content) {
+      content.classList.remove('active');
+    });
+    
+    // 7. Show new testimonial content
+    var newContent = document.querySelector('.testimonial-content-{{ section.id }}[data-content="' + newIndex + '"]');
+    if (newContent) {
+      newContent.classList.add('active');
+    }
+    
+    // Update active index
+    activeIndex = newIndex;
+  }
+  
+  // Add click event to profile tabs
+  profileTabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      var tabIndex = parseInt(this.getAttribute('data-tab'));
+      switchTestimonial(tabIndex);
+    });
+  });
+  
+  // Add click event to play buttons
+  playButtons.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var videoIndex = this.getAttribute('data-video-index');
+      var video = document.getElementById('video-{{ section.id }}-' + videoIndex);
+      
+      if (video) {
+        if (video.paused) {
+          video.play();
+          this.classList.add('playing');
+        } else {
+          video.pause();
+          this.classList.remove('playing');
+        }
+      }
+    });
+  });
+  
+  // Add click event to mute buttons
+  muteButtons.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var videoIndex = this.getAttribute('data-video-index');
+      var video = document.getElementById('video-{{ section.id }}-' + videoIndex);
+      
+      if (video) {
+        video.muted = !video.muted;
+        if (video.muted) {
+          this.classList.add('muted');
+          this.classList.remove('unmuted');
+        } else {
+          this.classList.remove('muted');
+          this.classList.add('unmuted');
+        }
+      }
+    });
+  });
+  
+  // Initialize first video
+  var firstVideo = document.getElementById('video-{{ section.id }}-1');
+  if (firstVideo) {
+    firstVideo.muted = true;
+    firstVideo.play().catch(function(err) {
+      console.log('Initial video autoplay failed:', err);
+    });
+  }
+  
+});
+</script>
+
+{% schema %}
+{
+  "name": "Expert Testimonials",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Media Border Color",
+      "default": "#8B0A50"
+    },
+    {
+      "type": "color",
+      "id": "active_border_color",
+      "label": "Active Tab Border Color",
+      "default": "#8B0A50"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "select",
+          "id": "media_type",
+          "label": "Media Type",
+          "options": [
+            {
+              "value": "image",
+              "label": "Image"
+            },
+            {
+              "value": "video",
+              "label": "Video"
+            }
+          ],
+          "default": "video"
+        },
+        {
+          "type": "image_picker",
+          "id": "profile_image",
+          "label": "Profile Image",
+          "info": "Used for profile tab and video poster"
+        },
+        {
+          "type": "url",
+          "id": "video_url",
+          "label": "Video URL",
+          "info": "Upload MP4 video to Shopify files and paste URL here"
+        },
+        {
+          "type": "textarea",
+          "id": "quote_text",
+          "label": "Quote Text",
+          "default": "This product has transformed my practice and my patients love it."
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "Author Name",
+          "default": "Dr. Jane Smith, MD"
+        },
+        {
+          "type": "text",
+          "id": "author_title",
+          "label": "Author Title/Credentials",
+          "default": "Board-Certified Dermatologist"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Expert Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
