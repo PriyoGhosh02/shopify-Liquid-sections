@@ -1,0 +1,1537 @@
+{% comment %}
+  Section Name: Hero Banner with Video
+  Description: Left side video, right side content
+  Author: Custom Build
+  Version: 2.0 - Fixed video loading and 50/50 layout
+{% endcomment %}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --c-bg-primary: {{ section.settings.bg_color | default: '#fefbf9' }};
+    --c-title: {{ section.settings.title_color | default: '#290217' }};
+    --c-title-mob: {{ section.settings.title_color_mobile | default: '#290217' }};
+    --c-text: {{ section.settings.text_color | default: '#290217' }};
+    --c-text-mob: {{ section.settings.text_color_mobile | default: '#290217' }};
+    --c-primary-btn: {{ section.settings.primary_btn_color | default: '#290217' }};
+    --c-primary-btn-text: {{ section.settings.primary_btn_text_color | default: '#ffffff' }};
+    --c-secondary-btn: {{ section.settings.secondary_btn_color | default: '#290217' }};
+    --c-secondary-btn-text: {{ section.settings.secondary_btn_text_color | default: '#290217' }};
+    
+    background-color: var(--c-bg-primary);
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+  }
+
+  @media (min-width: 768px) {
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_tablet }}px;
+      padding-bottom: {{ section.settings.padding_bottom_tablet }}px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #shopify-section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top_desktop }}px;
+      padding-bottom: {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  /* ============================================
+     50/50 LAYOUT FIXES START HERE
+  ============================================ */
+  
+  .hero-banner-{{ section.id }} .hero-container {
+    max-width: 1490px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0 5px;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-{{ section.id }} .hero-container {
+      padding: 0 20px;
+    }
+  }
+
+  /* GRID LAYOUT - 50/50 on desktop */
+  .hero-banner-{{ section.id }} .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .hero-grid {
+      grid-template-columns: 1fr 1fr; /* 50/50 split */
+      gap: 60px;
+      min-height: {{ section.settings.min_height_desktop | default: 600 }}px;
+    }
+  }
+
+  /* VIDEO CONTAINER - Takes full width of its 50% column */
+  .hero-banner-{{ section.id }} .video-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%; /* 4:3 aspect ratio - adjust if needed */
+    overflow: hidden;
+    border-radius: {{ section.settings.video_border_radius }}px;
+    background-color: #000; /* Black background while loading */
+    order: 1; /* Video on top for mobile */
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .video-container {
+      height: 100%; /* Fill entire grid cell */
+      padding-bottom: 0;
+      order: 2; /* Video on right side for desktop */
+    }
+  }
+
+  /* VIDEO ELEMENT - Fills container */
+  .hero-banner-{{ section.id }} .video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-banner-{{ section.id }} .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    
+    /* Fix for iOS/Safari */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+
+  /* iOS specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    .hero-banner-{{ section.id }} .hero-video {
+      object-fit: cover !important;
+    }
+  }
+
+  /* CONTENT CONTAINER - Takes 50% with padding */
+  .hero-banner-{{ section.id }} .content-container {
+    width: 100%;
+    box-sizing: border-box;
+    order: 2; /* Content below video on mobile */
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .content-container {
+      order: 1; /* Content on left side for desktop */
+      padding: 40px 60px 30px 0;
+      max-width: 100%;
+    }
+  }
+
+  /* CONTENT INNER with responsive padding */
+  .hero-banner-{{ section.id }} .content-inner {
+    padding: 0 16px; /* Mobile padding */
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-{{ section.id }} .content-inner {
+      padding: 0 40px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .content-inner {
+      padding: 0; /* Remove side padding on desktop */
+      text-align: left; /* Left align on desktop */
+      max-width: 520px; /* Optional: limit content width */
+    }
+  }
+
+  /* REVERSE LAYOUT OPTION (Content right, Video left) */
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }}.layout-reverse .content-container {
+      order: 2;
+      padding-right: 0;
+      padding-left: 60px;
+    }
+    
+    .hero-banner-{{ section.id }}.layout-reverse .video-container {
+      order: 1;
+    }
+  }
+
+  /* ============================================
+     VIDEO LOADING FIXES START HERE
+  ============================================ */
+  
+  /* Video loading state */
+  .hero-banner-{{ section.id }} .video-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-{{ section.id }} 1.5s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+
+  @keyframes loading-{{ section.id }} {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* Video error state */
+  .hero-banner-{{ section.id }} .video-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f5f5f5;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+
+  /* Video fallback image */
+  .hero-banner-{{ section.id }} .video-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+
+  /* Play button overlay for manual play */
+  .hero-banner-{{ section.id }} .video-play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    background: rgba(0,0,0,0.1);
+  }
+
+  .hero-banner-{{ section.id }} .video-play-button {
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+
+  .hero-banner-{{ section.id }} .video-play-button:hover {
+    transform: scale(1.1);
+    background: rgba(0,0,0,0.9);
+  }
+
+  /* ============================================
+     REST OF THE STYLES
+  ============================================ */
+
+  /* AWARD BADGES */
+  .hero-banner-{{ section.id }} .award-badges {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-{{ section.id }} .award-badges {
+      flex-direction: row;
+      bottom: 30px;
+      right: 30px;
+      gap: 16px;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .award-badge {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-{{ section.id }} .award-badge {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .award-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* RATING SECTION */
+  .hero-banner-{{ section.id }} .rating-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+    @media (max-width: 500px) {
+.hero-banner-template--27457875706202__first_banner_ptgA3h .rating-section {
+    flex-direction: column-reverse;
+    gap: 15px;
+}
+.headline > p {
+    font-size: 45px;
+}
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .rating-section {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .stars-container {
+    width: 100px;
+    height: 20px;
+  }
+
+  .hero-banner-{{ section.id }} .stars-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hero-banner-{{ section.id }} .rating-text {
+    font-size: 18px;
+    color: var(--c-text);
+    font-weight: 400;
+    line-height: 1.4;
+    font-family: var(--font-body-family);
+  }
+
+  /* HEADLINE */
+  .hero-banner-{{ section.id }} .headline {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--c-title);
+    font-family: var(--font-heading-family);
+  }
+
+  .hero-banner-{{ section.id }} .headline strong {
+    font-weight: 700;
+  }
+
+  @media (min-width: 768px) {
+    .hero-banner-{{ section.id }} .headline {
+      font-size: 32px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .headline {
+      font-size: 40px;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .hero-banner-{{ section.id }} .headline {
+      font-size: 48px;
+    }
+  }
+
+  /* DESCRIPTION */
+  .hero-banner-{{ section.id }} .description {
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--c-text);
+    margin-bottom: 15px;
+    font-family: var(--font-body-family);
+  }
+
+  .hero-banner-{{ section.id }} .description strong {
+    font-weight: 600;
+  }
+
+  /* BUTTONS */
+  .hero-banner-{{ section.id }} .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .button-group {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    font-size: 19px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    min-width: 200px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    font-family: var(--font-body-family);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hero-banner-{{ section.id }} .button-primary {
+    background-color: var(--c-primary-btn);
+    color: var(--c-primary-btn-text);
+  }
+
+  .hero-banner-{{ section.id }} .button-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .hero-banner-{{ section.id }} .button-secondary {
+    background-color: transparent;
+    color: var(--c-secondary-btn-text);
+    border-color: var(--c-secondary-btn);
+  }
+
+  .hero-banner-{{ section.id }} .button-secondary:hover {
+    background-color: var(--c-secondary-btn);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  /* PROMO BADGE */
+  .hero-banner-{{ section.id }} .promo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 20px;
+    /* background-color: rgba(41, 2, 23, 0.05); */
+    border-radius: 50px;
+  }
+
+  .hero-banner-{{ section.id }} .promo-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .hero-banner-{{ section.id }} .promo-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hero-banner-{{ section.id }} .promo-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--c-text);
+    font-family: var(--font-body-family);
+  }
+
+  /* RETAILERS SECTION */
+  .hero-banner-{{ section.id }} .retailers-desktop {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .retailers-desktop {
+      display: block;
+      margin-top: 40px;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .retailers-label {
+    display: block;
+    font-size: 14px;
+    color: var(--c-text);
+    margin-bottom: 16px;
+    font-family: var(--font-body-family);
+  }
+
+  .hero-banner-{{ section.id }} .retailers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .retailers-grid {
+      justify-content: flex-start;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .retailer-logo {
+    height: 24px;
+    width: auto;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero-banner-{{ section.id }} .retailer-logo:hover {
+    opacity: 1;
+  }
+
+  /* MOBILE RETAILERS */
+  .hero-banner-{{ section.id }} .retailers-mobile {
+    display: block;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-banner-{{ section.id }} .retailers-mobile {
+      display: none;
+    }
+  }
+
+  .hero-banner-{{ section.id }} .marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+    margin-top: 16px;
+  }
+
+  .hero-banner-{{ section.id }} .marquee-content {
+    display: inline-block;
+    animation: marquee-{{ section.id }} 20s linear infinite;
+  }
+
+  @keyframes marquee-{{ section.id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .hero-banner-{{ section.id }} .marquee-item {
+    display: inline-block;
+    margin: 0 40px;
+    vertical-align: middle;
+  }
+
+  .hero-banner-{{ section.id }} .marquee-logo {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
+  }
+{%- endstyle -%}
+
+{%- assign layout_class = '' -%}
+{%- if section.settings.layout_direction == 'reverse' -%}
+  {%- assign layout_class = 'layout-reverse' -%}
+{%- endif -%}
+
+<section class="hero-banner-{{ section.id }} shopify-section {{ layout_class }}" data-section-id="{{ section.id }}">
+  <div class="hero-container">
+    <div class="hero-grid">
+      
+      <!-- VIDEO SIDE (50% width, video fills container) -->
+      <div class="video-container">
+        <div class="video-wrapper">
+          {%- comment -%} Preload poster image for better performance {%- endcomment -%}
+          {%- if section.settings.video_poster -%}
+            <link rel="preload" as="image" href="{{ section.settings.video_poster | image_url: width: 1200 }}" fetchpriority="high">
+          {%- endif -%}
+          
+          <!-- VIDEO ELEMENT WITH ALL FIXES -->
+          <video 
+            class="hero-video" 
+            {% if section.settings.video_autoplay %}autoplay{% endif %}
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            {% if section.settings.video_poster %}
+            poster="{{ section.settings.video_poster | image_url: width: 1200 }}"
+            {% endif %}
+            width="1920"
+            height="1080"
+            aria-label="{{ section.settings.video_alt_text | default: 'Product demonstration video' }}"
+            {% unless section.settings.show_controls %}controlslist="nodownload"{% endunless %}
+            {% if section.settings.show_controls %}{% endif %}
+            data-video-src="{% if section.settings.video_url %}{{ section.settings.video_url }}{% endif %}"
+          >
+            {%- if section.settings.video_url -%}
+              <source src="{{ section.settings.video_url }}" type="video/mp4">
+              {%- comment -%} Add WebM version if available {%- endcomment -%}
+              {%- if section.settings.video_url_webm -%}
+                <source src="{{ section.settings.video_url_webm }}" type="video/webm">
+              {%- endif -%}
+            {%- endif -%}
+            
+            {%- comment -%} Fallback image if video fails {%- endcomment -%}
+            {%- if section.settings.video_fallback or section.settings.video_poster -%}
+              <img 
+                src="{% if section.settings.video_fallback %}{{ section.settings.video_fallback | image_url: width: 1200 }}{% else %}{{ section.settings.video_poster | image_url: width: 1200 }}{% endif %}" 
+                alt="{{ section.settings.video_alt_text }}" 
+                class="video-fallback"
+                loading="lazy"
+              >
+            {%- endif -%}
+            
+            <p>Your browser doesn't support HTML5 video.</p>
+          </video>
+          
+          <!-- Loading indicator -->
+          <div class="video-loading" id="video-loading-{{ section.id }}">
+            <div class="loading-spinner">Loading video...</div>
+          </div>
+          
+          <!-- Error message -->
+          <div class="video-error" id="video-error-{{ section.id }}">
+            <div>
+              <p>Video failed to load.</p>
+              <button onclick="retryVideo('{{ section.id }}')" style="margin-top: 10px; padding: 8px 16px; background: #290217; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Retry
+              </button>
+            </div>
+          </div>
+          
+          <!-- Play button overlay -->
+          <div class="video-play-overlay" id="video-play-overlay-{{ section.id }}">
+            <button class="video-play-button" onclick="playVideo('{{ section.id }}')">
+              ▶
+            </button>
+          </div>
+        </div>
+
+        <!-- AWARD BADGES -->
+        <div class="award-badges">
+          {%- for i in (1..2) -%}
+            {%- assign badge_setting = 'award_badge_' | append: i -%}
+            {%- assign badge_alt_setting = 'award_badge_alt_' | append: i -%}
+            {%- if section.settings[badge_setting] -%}
+              <div class="award-badge">
+                <img 
+                  src="{{ section.settings[badge_setting] | image_url: width: 100 }}" 
+                  alt="{{ section.settings[badge_alt_setting] }}" 
+                  width="40" 
+                  height="40" 
+                  loading="lazy"
+                >
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <!-- CONTENT SIDE (50% width with padding) -->
+      <div class="content-container">
+        <div class="content-inner">
+          
+          <!-- RATING -->
+          <div class="rating-section">
+            {%- if section.settings.stars_image -%}
+              <div class="stars-container">
+                <img 
+                  src="{{ section.settings.stars_image | image_url: width: 71 }}" 
+                  alt="5 star rating" 
+                  width="71" 
+                  height="14" 
+                  loading="lazy"
+                >
+              </div>
+            {%- endif -%}
+            
+            {%- if section.settings.rating_text != blank -%}
+              <div class="rating-text">{{ section.settings.rating_text }}</div>
+            {%- endif -%}
+          </div>
+
+          <!-- HEADLINE -->
+          {%- if section.settings.headline != blank -%}
+            <h1 class="headline">{{ section.settings.headline }}</h1>
+          {%- endif -%}
+
+          <!-- DESCRIPTION -->
+          {%- if section.settings.description != blank -%}
+            <div class="description">{{ section.settings.description }}</div>
+          {%- endif -%}
+
+          <!-- BUTTONS -->
+          <div class="button-group">
+            {%- if section.settings.cta_1_text != blank and section.settings.cta_1_link != blank -%}
+              <a href="{{ section.settings.cta_1_link }}" class="button button-primary" aria-label="{{ section.settings.cta_1_text }}">
+                {{ section.settings.cta_1_text }}
+              </a>
+            {%- endif -%}
+            
+            {%- if section.settings.cta_2_text != blank and section.settings.cta_2_link != blank -%}
+              <a href="{{ section.settings.cta_2_link }}" class="button button-secondary" aria-label="{{ section.settings.cta_2_text }}">
+                {{ section.settings.cta_2_text }}
+              </a>
+            {%- endif -%}
+          </div>
+
+          <!-- PROMO BADGE -->
+          {%- if section.settings.promo_text != blank -%}
+            <div class="promo-badge">
+              {%- if section.settings.promo_icon -%}
+                <div class="promo-icon">
+                  <img 
+                    src="{{ section.settings.promo_icon | image_url: width: 20 }}" 
+                    alt="Promo icon" 
+                    width="20" 
+                    height="20" 
+                    loading="lazy"
+                  >
+                </div>
+              {%- endif -%}
+              <span class="promo-text">{{ section.settings.promo_text }}</span>
+            </div>
+          {%- endif -%}
+
+          <!-- RETAILERS (DESKTOP) -->
+          {%- if section.blocks.size > 0 -%}
+            <div class="retailers-desktop">
+              {%- if section.settings.retailers_label != blank -%}
+                <span class="retailers-label">{{ section.settings.retailers_label }}</span>
+              {%- endif -%}
+              
+              <div class="retailers-grid">
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'retailer_logo' and block.settings.logo -%}
+                    <img 
+                      src="{{ block.settings.logo | image_url: width: block.settings.width | default: 120 }}" 
+                      alt="{{ block.settings.alt_text | default: 'Retailer logo' }}" 
+                      class="retailer-logo" 
+                      width="{{ block.settings.width | default: 120 }}" 
+                      height="{{ block.settings.height | default: 30 }}" 
+                      loading="lazy"
+                      style="max-width: {{ block.settings.width | default: 120 }}px"
+                    >
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <!-- RETAILERS (MOBILE MARQUEE) -->
+    {%- if section.blocks.size > 0 -%}
+      <div class="retailers-mobile">
+        {%- if section.settings.retailers_label != blank -%}
+          <span class="retailers-label">{{ section.settings.retailers_label }}</span>
+        {%- endif -%}
+        
+        <div class="marquee-container">
+          <div class="marquee-content">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'retailer_logo' and block.settings.logo -%}
+                <div class="marquee-item">
+                  <img 
+                    src="{{ block.settings.logo | image_url: width: block.settings.mobile_width | default: 80 }}" 
+                    alt="{{ block.settings.alt_text | default: 'Retailer logo' }}" 
+                    class="marquee-logo" 
+                    width="{{ block.settings.mobile_width | default: 80 }}" 
+                    height="{{ block.settings.mobile_height | default: 20 }}" 
+                    loading="lazy"
+                  >
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+            
+            <!-- Duplicate for seamless loop -->
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'retailer_logo' and block.settings.logo -%}
+                <div class="marquee-item">
+                  <img 
+                    src="{{ block.settings.logo | image_url: width: block.settings.mobile_width | default: 80 }}" 
+                    alt="{{ block.settings.alt_text | default: 'Retailer logo' }}" 
+                    class="marquee-logo" 
+                    width="{{ block.settings.mobile_width | default: 80 }}" 
+                    height="{{ block.settings.mobile_height | default: 20 }}" 
+                    loading="lazy"
+                  >
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<!-- VIDEO SCHEMA -->
+{%- if section.settings.enable_video_schema and section.settings.video_url -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "{{ section.settings.video_schema_name | default: 'Product Demonstration' }}",
+  "description": "{{ section.settings.video_schema_description | default: section.settings.description | strip_html | escape }}",
+  "thumbnailUrl": "{% if section.settings.video_poster %}{{ section.settings.video_poster | image_url: width: 1200 }}{% endif %}",
+  "uploadDate": "{{ section.settings.video_upload_date | default: '2024-01-01T00:00:00Z' }}",
+  "duration": "{{ section.settings.video_duration | default: 'PT15S' }}",
+  "contentUrl": "{{ section.settings.video_url }}",
+  "embedUrl": "{{ canonical_url }}",
+  "interactionCount": "{{ section.settings.video_interaction_count | default: '10000' }}"
+}
+</script>
+{%- endif -%}
+
+<!-- PRODUCT SCHEMA -->
+{%- if section.settings.enable_product_schema -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ section.settings.product_schema_name | default: 'Red Light Therapy Device' }}",
+  "description": "{{ section.settings.product_schema_description | default: section.settings.description | strip_html | escape }}",
+  "image": "{% if section.settings.product_schema_image %}{{ section.settings.product_schema_image | image_url: width: 800 }}{% elsif section.settings.video_poster %}{{ section.settings.video_poster | image_url: width: 800 }}{% endif %}",
+  "brand": {
+    "@type": "Brand",
+    "name": "{{ section.settings.product_schema_brand | default: shop.name }}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ section.settings.product_rating_value | default: '4.9' }}",
+    "reviewCount": "{{ section.settings.product_review_count | default: '726000' }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ shop.url }}{{ section.settings.cta_1_link | default: '/' }}",
+    "priceCurrency": "{{ section.settings.product_price_currency | default: 'USD' }}",
+    "price": "{{ section.settings.product_price | default: '149.00' }}",
+    "priceValidUntil": "{{ section.settings.product_price_valid_until | default: '2024-12-31' }}",
+    "availability": "https://schema.org/InStock",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+}
+</script>
+{%- endif -%}
+
+<!-- VIDEO LOADING SCRIPT WITH ALL FIXES -->
+<script>
+// VIDEO LOADING SYSTEM FOR SECTION {{ section.id }}
+document.addEventListener('DOMContentLoaded', function() {
+  const sectionId = '{{ section.id }}';
+  const videoContainer = document.querySelector(`.hero-banner-{{ section.id }} .video-container`);
+  const videoElement = videoContainer ? videoContainer.querySelector('.hero-video') : null;
+  
+  if (!videoElement) return;
+  
+  // Elements
+  const loadingEl = document.getElementById(`video-loading-{{ section.id }}`);
+  const errorEl = document.getElementById(`video-error-{{ section.id }}`);
+  const playOverlay = document.getElementById(`video-play-overlay-{{ section.id }}`);
+  const fallbackImg = videoElement.querySelector('.video-fallback');
+  
+  // Force video properties
+  videoElement.muted = true;
+  videoElement.playsInline = true;
+  
+  // Reset states
+  if (loadingEl) loadingEl.style.display = 'flex';
+  if (errorEl) errorEl.style.display = 'none';
+  if (playOverlay) playOverlay.style.display = 'none';
+  
+  // Function to load and play video
+  function loadVideo() {
+    if (!videoElement) return;
+    
+    // Clear any existing sources and reload
+    const sources = videoElement.querySelectorAll('source');
+    sources.forEach(source => {
+      const originalSrc = source.src;
+      if (originalSrc) {
+        // Add cache busting parameter
+        const newSrc = originalSrc.split('?')[0] + '?t=' + Date.now();
+        source.src = newSrc;
+      }
+    });
+    
+    // Reload video
+    videoElement.load();
+    
+    // Try to play
+    const playPromise = videoElement.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        // Success
+        console.log('Video playing successfully');
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (errorEl) errorEl.style.display = 'none';
+        videoElement.style.display = 'block';
+      }).catch(error => {
+        console.log('Autoplay prevented, showing controls:', error);
+        
+        // Show manual play button
+        if (playOverlay) {
+          playOverlay.style.display = 'flex';
+        }
+        
+        // Show video controls
+        {% comment %} videoElement.controls = true; {% endcomment %}
+        
+        // Hide loading
+        if (loadingEl) loadingEl.style.display = 'none';
+      });
+    }
+  }
+  
+  // Video event listeners
+  videoElement.addEventListener('loadeddata', function() {
+    console.log('Video loaded successfully');
+    if (loadingEl) loadingEl.style.display = 'none';
+    videoElement.style.display = 'block';
+  });
+  
+  videoElement.addEventListener('error', function(e) {
+    console.error('Video error:', videoElement.error);
+    
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl) errorEl.style.display = 'flex';
+    
+    // Show fallback image
+    if (fallbackImg) {
+      fallbackImg.style.display = 'block';
+      videoElement.style.display = 'none';
+    }
+  });
+  
+  videoElement.addEventListener('canplay', function() {
+    console.log('Video can play');
+    if (loadingEl) loadingEl.style.display = 'none';
+  });
+  
+  // Play when in viewport
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Load video when it comes into view
+        if (videoElement.readyState < 2) { // Not loaded yet
+          loadVideo();
+        }
+      }
+    });
+  }, { 
+    threshold: 0.1,
+    rootMargin: '50px'
+  });
+  
+  if (videoContainer) {
+    observer.observe(videoContainer);
+  }
+  
+  // Also try to load immediately
+  setTimeout(loadVideo, 500);
+});
+
+// Global functions for buttons
+function playVideo(sectionId) {
+  const video = document.querySelector(`.hero-banner-${sectionId} .hero-video`);
+  const playOverlay = document.getElementById(`video-play-overlay-${sectionId}`);
+  
+  if (video) {
+    video.play().then(() => {
+      if (playOverlay) playOverlay.style.display = 'none';
+    }).catch(error => {
+      console.log('Manual play failed:', error);
+      {% comment %} video.controls = true; {% endcomment %}
+    });
+  }
+}
+
+function retryVideo(sectionId) {
+  const video = document.querySelector(`.hero-banner-${sectionId} .hero-video`);
+  const errorEl = document.getElementById(`video-error-${sectionId}`);
+  const loadingEl = document.getElementById(`video-loading-${sectionId}`);
+  const fallbackImg = document.querySelector(`.hero-banner-${sectionId} .video-fallback`);
+  
+  if (errorEl) errorEl.style.display = 'none';
+  if (loadingEl) loadingEl.style.display = 'flex';
+  if (fallbackImg) fallbackImg.style.display = 'none';
+  
+  if (video) {
+    // Clear and reload video
+    const sources = video.querySelectorAll('source');
+    sources.forEach(source => {
+      const originalSrc = source.src;
+      if (originalSrc) {
+        source.src = originalSrc.split('?')[0] + '?retry=' + Date.now();
+      }
+    });
+    
+    video.load();
+    
+    setTimeout(() => {
+      video.play().catch(e => {
+        console.log('Retry play failed:', e);
+        {% comment %} video.controls = true; {% endcomment %}
+      });
+    }, 100);
+  }
+}
+</script>
+
+{% schema %}
+{
+  "name": "Hero Banner with Video",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout Settings"
+    },
+    {
+      "type": "select",
+      "id": "layout_direction",
+      "label": "Layout Direction",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Content Left / Video Right"
+        },
+        {
+          "value": "reverse",
+          "label": "Video Left / Content Right"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "range",
+      "id": "min_height_desktop",
+      "label": "Minimum Height (Desktop)",
+      "min": 400,
+      "max": 1000,
+      "step": 20,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Video Settings"
+    },
+    {
+      "type": "url",
+      "id": "video_url",
+      "label": "Video URL (MP4)",
+      "info": "Direct link to .mp4 file"
+    },
+    {
+      "type": "url",
+      "id": "video_url_webm",
+      "label": "Video URL (WebM) - Optional",
+      "info": "WebM format for better compatibility"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_poster",
+      "label": "Video Poster Image",
+      "info": "Required for better loading experience"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_fallback",
+      "label": "Fallback Image",
+      "info": "Shown if video fails to load"
+    },
+    {
+      "type": "text",
+      "id": "video_alt_text",
+      "label": "Video Alt Text",
+      "default": "Product demonstration video"
+    },
+    {
+      "type": "checkbox",
+      "id": "video_autoplay",
+      "label": "Autoplay Video",
+      "default": true,
+      "info": "Note: Browsers require video to be muted for autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_controls",
+      "label": "Show Video Controls",
+      "default": false,
+      "info": "Only shows if autoplay fails"
+    },
+    {
+      "type": "range",
+      "id": "video_border_radius",
+      "label": "Video Border Radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Award Badges"
+    },
+    {
+      "type": "image_picker",
+      "id": "award_badge_1",
+      "label": "Award Badge 1"
+    },
+    {
+      "type": "text",
+      "id": "award_badge_alt_1",
+      "label": "Badge 1 Alt Text",
+      "default": "Award badge"
+    },
+    {
+      "type": "image_picker",
+      "id": "award_badge_2",
+      "label": "Award Badge 2"
+    },
+    {
+      "type": "text",
+      "id": "award_badge_alt_2",
+      "label": "Badge 2 Alt Text",
+      "default": "Award badge"
+    },
+    {
+      "type": "header",
+      "content": "Content Settings"
+    },
+    {
+      "type": "image_picker",
+      "id": "stars_image",
+      "label": "Stars Image"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating Text",
+      "default": "LOVED BY 726,000+ CUSTOMERS"
+    },
+    {
+      "type": "richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "<p>Get your most <strong>vibrant</strong>, <strong>radiant skin</strong> in 30 days!</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>FDA-cleared Red Light Therapy that helps support collagen for <strong>visibly firmer</strong>, <strong>smoother</strong>, <strong>younger-looking skin</strong>.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_1_text",
+      "label": "CTA 1 Text",
+      "default": "SHOP BUY 1 GET 1 FREE!"
+    },
+    {
+      "type": "url",
+      "id": "cta_1_link",
+      "label": "CTA 1 Link"
+    },
+    {
+      "type": "text",
+      "id": "cta_2_text",
+      "label": "CTA 2 Text",
+      "default": "TAKE THE SKIN QUIZ"
+    },
+    {
+      "type": "url",
+      "id": "cta_2_link",
+      "label": "CTA 2 Link"
+    },
+    {
+      "type": "header",
+      "content": "Promo Badge"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_icon",
+      "label": "Promo Icon"
+    },
+    {
+      "type": "text",
+      "id": "promo_text",
+      "label": "Promo Text",
+      "default": "Buy One, Get One FREE!"
+    },
+    {
+      "type": "header",
+      "content": "Retailers Section"
+    },
+    {
+      "type": "text",
+      "id": "retailers_label",
+      "label": "Retailers Label",
+      "default": "#1 LIGHT THERAPY BRAND AVAILABLE AT"
+    },
+    {
+      "type": "header",
+      "content": "Color Settings"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#fefbf9"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title Color",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "title_color_mobile",
+      "label": "Title Color (Mobile)",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "text_color_mobile",
+      "label": "Text Color (Mobile)",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "primary_btn_color",
+      "label": "Primary Button Color",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "primary_btn_text_color",
+      "label": "Primary Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_color",
+      "label": "Secondary Button Color",
+      "default": "#290217"
+    },
+    {
+      "type": "color",
+      "id": "secondary_btn_text_color",
+      "label": "Secondary Button Text Color",
+      "default": "#290217"
+    },
+    {
+      "type": "header",
+      "content": "Spacing Settings"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding Top (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding Bottom (Mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 20,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "label": "Padding Top (Tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "label": "Padding Bottom (Tablet)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Padding Top (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Padding Bottom (Desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 0,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "SEO Schema Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_schema",
+      "label": "Enable Video Schema",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "video_schema_name",
+      "label": "Video Schema Name",
+      "default": "Red Light Therapy Device Demonstration"
+    },
+    {
+      "type": "text",
+      "id": "video_schema_description",
+      "label": "Video Schema Description"
+    },
+    {
+      "type": "text",
+      "id": "video_upload_date",
+      "label": "Video Upload Date",
+      "default": "2024-01-01T00:00:00Z",
+      "info": "ISO 8601 format"
+    },
+    {
+      "type": "text",
+      "id": "video_duration",
+      "label": "Video Duration",
+      "default": "PT15S",
+      "info": "ISO 8601 format (PT15S = 15 seconds)"
+    },
+    {
+      "type": "text",
+      "id": "video_interaction_count",
+      "label": "Video Interaction Count",
+      "default": "10000"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_product_schema",
+      "label": "Enable Product Schema",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "product_schema_name",
+      "label": "Product Name",
+      "default": "Red Light Therapy Device"
+    },
+    {
+      "type": "text",
+      "id": "product_schema_description",
+      "label": "Product Description"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_schema_image",
+      "label": "Product Image"
+    },
+    {
+      "type": "text",
+      "id": "product_schema_brand",
+      "label": "Product Brand",
+      "default": "Your Brand"
+    },
+    {
+      "type": "text",
+      "id": "product_rating_value",
+      "label": "Product Rating Value",
+      "default": "4.9"
+    },
+    {
+      "type": "text",
+      "id": "product_review_count",
+      "label": "Product Review Count",
+      "default": "726000"
+    },
+    {
+      "type": "text",
+      "id": "product_price_currency",
+      "label": "Product Price Currency",
+      "default": "USD"
+    },
+    {
+      "type": "text",
+      "id": "product_price",
+      "label": "Product Price",
+      "default": "149.00"
+    },
+    {
+      "type": "text",
+      "id": "product_price_valid_until",
+      "label": "Price Valid Until",
+      "default": "2024-12-31"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "retailer_logo",
+      "name": "Retailer Logo",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Logo Image"
+        },
+        {
+          "type": "text",
+          "id": "alt_text",
+          "label": "Alt Text",
+          "default": "Retailer logo"
+        },
+        {
+          "type": "number",
+          "id": "width",
+          "label": "Logo Width (Desktop)",
+          "default": 120,
+          "info": "In pixels"
+        },
+        {
+          "type": "number",
+          "id": "height",
+          "label": "Logo Height (Desktop)",
+          "default": 30,
+          "info": "In pixels"
+        },
+        {
+          "type": "number",
+          "id": "mobile_width",
+          "label": "Logo Width (Mobile)",
+          "default": 80,
+          "info": "In pixels"
+        },
+        {
+          "type": "number",
+          "id": "mobile_height",
+          "label": "Logo Height (Mobile)",
+          "default": 20,
+          "info": "In pixels"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner with Video",
+      "category": "Custom",
+      "settings": {
+        "layout_direction": "normal",
+        "min_height_desktop": 600
+      },
+      "blocks": [
+        {
+          "type": "retailer_logo",
+          "settings": {
+            "alt_text": "Ulta Beauty",
+            "width": 58,
+            "height": 23,
+            "mobile_width": 58
+          }
+        },
+        {
+          "type": "retailer_logo",
+          "settings": {
+            "alt_text": "Nordstrom",
+            "width": 120,
+            "height": 15,
+            "mobile_width": 110
+          }
+        },
+        {
+          "type": "retailer_logo",
+          "settings": {
+            "alt_text": "Neiman Marcus",
+            "width": 80,
+            "height": 30,
+            "mobile_width": 70
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
