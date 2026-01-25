@@ -1,0 +1,885 @@
+{% comment %}
+  Product List Section with Promotional Card
+  - First card is promotional (optional)
+  - Followed by product cards
+  - Fully customizable via schema
+{% endcomment %}
+
+<style>
+  .product-section-{{ section.id }} {
+    --color-wine: #232323;
+    --color-bg: #FEFBF9;
+    --color-shadow: #6B7280;
+    --color-white: #FFFFFF;
+    background-color: var(--color-bg);
+    padding: {{ section.settings.padding_top_mobile }}px 0 {{ section.settings.padding_bottom_mobile }}px;
+  }
+  
+  @media (min-width: 768px) {
+    .product-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top_tablet }}px 0 {{ section.settings.padding_bottom_tablet }}px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .product-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top_desktop }}px 0 {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  .product-section-{{ section.id }} .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .product-section-{{ section.id }} .section-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .product-section-{{ section.id }} .section-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--color-wine);
+    margin-bottom: 20px;
+  }
+
+  .product-section-{{ section.id }} .btn-shop {
+    display: inline-block;
+    background: var(--color-wine);
+    color: var(--color-white);
+    padding: 14px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .product-section-{{ section.id }} .btn-shop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(41, 2, 23, 0.2);
+  }
+
+  .product-section-{{ section.id }} .products-wrapper {
+    margin-top: 60px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-section-{{ section.id }} .products-grid {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 20px 20px 20px;
+    margin: 0 -20px;
+    scroll-behavior: smooth;
+  }
+
+  .product-section-{{ section.id }} .products-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Scroll Buttons */
+  .product-section-{{ section.id }} .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--color-white);
+    border: 2px solid  #D59DAA;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    color: #D59DAA;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(41, 2, 23, 0.15);
+  }
+
+  .product-section-{{ section.id }} .scroll-btn:hover {
+    background: #D59DAA;
+    color: var(--color-white);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .product-section-{{ section.id }} .scroll-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .product-section-{{ section.id }} .scroll-btn-left {
+    left: 10px;
+  }
+
+  .product-section-{{ section.id }} .scroll-btn-right {
+    right: 10px;
+  }
+
+  .product-section-{{ section.id }} .scroll-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Hide scroll buttons on mobile */
+  @media (max-width: 767px) {
+    .product-section-{{ section.id }} .scroll-btn {
+      display: none;
+    }
+     .product-section-{{ section.id }} .section-title {
+    line-height: 3.5rem;
+    }
+  }
+
+  /* Mobile: 1 card at a time - 320px */
+  .product-section-{{ section.id }} .promo-card,
+  .product-section-{{ section.id }} .product-card {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* Tablet: 1 card at a time - 340px */
+  @media (min-width: 768px) {
+    .product-section-{{ section.id }} .promo-card,
+    .product-section-{{ section.id }} .product-card {
+      flex: 0 0 340px;
+    }
+    
+    .product-section-{{ section.id }} .products-grid {
+      gap: 30px;
+    }
+  }
+
+  /* Desktop: Show 4 cards, scroll if more than 4 */
+  @media (min-width: 1024px) {
+    .product-section-{{ section.id }} .products-wrapper {
+      max-width: 100%;
+    }
+
+    .product-section-{{ section.id }} .products-grid {
+      gap: 40px;
+      padding: 0 0 20px 0;
+      margin: 0;
+    }
+
+    .product-section-{{ section.id }} .promo-card,
+    .product-section-{{ section.id }} .product-card {
+      flex: 0 0 calc(25% - 30px);
+      min-width: 280px;
+      scroll-snap-align: start;
+    }
+
+    /* If 4 or fewer cards, center them and hide scroll buttons */
+    .product-section-{{ section.id }} .products-grid[data-card-count="1"],
+    .product-section-{{ section.id }} .products-grid[data-card-count="2"],
+    .product-section-{{ section.id }} .products-grid[data-card-count="3"],
+    .product-section-{{ section.id }} .products-grid[data-card-count="4"] {
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .product-section-{{ section.id }} .products-wrapper[data-card-count="1"] .scroll-btn,
+    .product-section-{{ section.id }} .products-wrapper[data-card-count="2"] .scroll-btn,
+    .product-section-{{ section.id }} .products-wrapper[data-card-count="3"] .scroll-btn,
+    .product-section-{{ section.id }} .products-wrapper[data-card-count="4"] .scroll-btn {
+      display: none;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .product-section-{{ section.id }} .promo-card,
+    .product-section-{{ section.id }} .product-card {
+      flex: 0 0 calc(25% - 30px);
+      min-width: 300px;
+    }
+  }
+
+  .product-section-{{ section.id }} .promo-card {
+    background: linear-gradient(135deg, #FFF5F7 0%, #FFE8ED 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(41, 2, 23, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-section-{{ section.id }} .promo-card a {
+    display: block;
+    text-decoration: none;
+  }
+
+  .product-section-{{ section.id }} .promo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(41, 2, 23, 0.15);
+  }
+
+  .product-section-{{ section.id }} .promo-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
+
+  .product-section-{{ section.id }} .promo-content {
+    padding: 30px;
+    text-align: center;
+    margin-top: auto;
+  }
+
+  .product-section-{{ section.id }} .promo-btn {
+    background: var(--color-white);
+    color: var(--color-wine);
+    padding: 12px 36px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-wine);
+  }
+
+  .product-section-{{ section.id }} .promo-btn:hover {
+    background: var(--color-wine);
+    color: var(--color-white);
+    transform: scale(1.05);
+  }
+
+  .product-section-{{ section.id }} .product-card {
+    background: #FDF5F1;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+.product-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+  .product-section-{{ section.id }} .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(41, 2, 23, 0.15);
+  }
+
+  .product-section-{{ section.id }} .product-image-wrapper {
+    position: relative;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background: #f8f8f8;
+  }
+
+  .product-section-{{ section.id }} .product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-section-{{ section.id }} .product-image-hover {
+    opacity: 0;
+  }
+
+  .product-section-{{ section.id }} .product-card:hover .product-image-hover {
+    opacity: 1;
+  }
+
+  .product-section-{{ section.id }} .badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--color-white);
+    color: var(--color-wine);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid #D5D5D5;
+    z-index: 2;
+  }
+
+  .product-section-{{ section.id }} .award-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 60px;
+    height: 60px;
+    z-index: 2;
+  }
+
+  @media (min-width: 1024px) {
+    .product-section-{{ section.id }} .award-badge {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  .product-section-{{ section.id }} .product-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 1024px) {
+    .product-section-{{ section.id }} .product-content {
+      padding: 24px;
+    }
+  }
+
+  .product-section-{{ section.id }} .reviews {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    color: #EE6983;
+  }
+
+  .product-section-{{ section.id }} .product-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-wine);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  @media (min-width: 1024px) {
+    .product-section-{{ section.id }} .product-title {
+      font-size: 18px;
+    }
+  }
+
+  .product-section-{{ section.id }} .product-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .product-section-{{ section.id }} .product-title a:hover {
+    color: #D4516D;
+  }
+
+  .product-section-{{ section.id }} .product-description {
+    color: var(--color-shadow);
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .product-section-{{ section.id }} .product-description {
+      font-size: 16px;
+    }
+  }
+
+  .product-section-{{ section.id }} .feature-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .product-section-{{ section.id }} .feature-tag {
+    border: 1px solid var(--color-wine);
+    color: var(--color-wine);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .product-section-{{ section.id }} .product-footer {
+    margin-top: auto;
+  }
+
+  .product-section-{{ section.id }} .add-to-cart-form {
+    margin-bottom: 12px;
+  }
+
+  .product-section-{{ section.id }} .btn-add-cart {
+    width: 100%;
+    background: #D59DAA;
+    color: var(--color-white);
+    border: none;
+    padding: 0 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px;
+  }
+
+  .product-section-{{ section.id }} .btn-add-cart:hover:not(:disabled) {
+    background: #ffffff;
+    border:1px solid #D59DAA;
+    color:#D59DAA;
+    transform: scale(1.02);
+  }
+
+  .product-section-{{ section.id }} .btn-add-cart:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .product-section-{{ section.id }} .price-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .product-section-{{ section.id }} .price-compare {
+    text-decoration: line-through;
+    opacity: 0.5;
+    font-weight: 300;
+  }
+
+  .product-section-{{ section.id }} .promo-message {
+    text-align: center;
+    font-weight: 600;
+    font-size: 18px;
+    color: #D59DAA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .product-section-{{ section.id }} .promo-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .product-section-{{ section.id }} .bogo-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #E91E63;
+    color: white;
+    padding: 20px 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    z-index: 3;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 1023px) {
+    .product-section-{{ section.id }} .promo-card.desktop-only {
+      display: none;
+    }
+  }
+</style>
+
+<div class="product-section-{{ section.id }}">
+  <div class="container">
+    {% if section.settings.title != blank %}
+      <div class="section-header">
+        <h2 class="section-title">{{ section.settings.title }}</h2>
+        {% if section.settings.button_text != blank %}
+          <a href="{{ section.settings.button_link }}" class="btn-shop">
+            {{ section.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="products-wrapper" data-card-count="{{ total_cards }}">
+      <!-- Scroll Buttons -->
+      <button class="scroll-btn scroll-btn-left" 
+              onclick="document.querySelector('.products-grid').scrollBy({left: -400, behavior: 'smooth'})"
+              aria-label="Scroll left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      
+      <button class="scroll-btn scroll-btn-right" 
+              onclick="document.querySelector('.products-grid').scrollBy({left: 400, behavior: 'smooth'})"
+              aria-label="Scroll right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+      
+      {% assign total_cards = section.blocks.size %}
+      {% if section.settings.show_promo_card %}
+        {% assign total_cards = total_cards | plus: 1 %}
+      {% endif %}
+      
+      <div class="products-grid" data-card-count="{{ total_cards }}">
+        {% comment %} Promotional Card {% endcomment %}
+        {% if section.settings.show_promo_card %}
+          <div class="promo-card {% if section.settings.promo_desktop_only %}desktop-only{% endif %}">
+            {% if section.settings.promo_image != blank %}
+              <img src="{{ section.settings.promo_image | image_url: width: 700 }}" 
+                   alt="{{ section.settings.promo_link_text }}" 
+                   class="promo-image"
+                   loading="lazy">
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'promo-image' }}
+            {% endif %}
+            {% if section.settings.promo_button_text != blank %}
+              <div class="promo-content">
+                <a href="{{ section.settings.promo_link }}" class="promo-btn">
+                  {{ section.settings.promo_button_text }}
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      {% comment %} Product Cards {% endcomment %}
+      {% for block in section.blocks %}
+        {% if block.type == 'product' %}
+          {% assign product = block.settings.product %}
+          
+          <div class="product-card" {{ block.shopify_attributes }}>
+            <div class="product-image-wrapper">
+              <a href="{{ product.url }}">
+                {% if product.featured_image %}
+                  <img src="{{ product.featured_image | image_url: width: 900 }}" 
+                       alt="{{ product.featured_image.alt | escape }}" 
+                       class="product-image"
+                       loading="lazy">
+                {% else %}
+                  {{ 'product-1' | placeholder_svg_tag: 'product-image' }}
+                {% endif %}
+                
+                {% if product.images[1] %}
+                  <img src="{{ product.images[1] | image_url: width: 900 }}" 
+                       alt="{{ product.title | escape }}" 
+                       class="product-image product-image-hover"
+                       loading="lazy">
+                {% endif %}
+              </a>
+              
+              {% if block.settings.badge_text != blank %}
+                <span class="badge">{{ block.settings.badge_text }}</span>
+              {% endif %}
+              
+              {% if block.settings.award_image != blank %}
+                <img src="{{ block.settings.award_image | image_url: width: 160 }}" 
+                     alt="Award" 
+                     class="award-badge"
+                     loading="lazy">
+              {% endif %}
+
+              {% if block.settings.show_bogo %}
+                <div class="bogo-badge">BEST SELLER</div>
+              {% endif %}
+            </div>
+
+            <div class="product-content">
+              {% if block.settings.show_reviews %}
+                <div class="reviews">
+                  ★★★★★ <span style="color: var(--color-wine);">4.7 / 5</span>
+                </div>
+              {% endif %}
+
+              <h3 class="product-title">
+                <a href="{{ product.url }}">{{ product.title }}</a>
+              </h3>
+
+              {% if block.settings.description != blank %}
+                <div class="product-description">
+                  {{ block.settings.description }}
+                </div>
+              {% endif %}
+
+              {% if block.settings.feature_tag_1 != blank or block.settings.feature_tag_2 != blank %}
+                <div class="feature-tags">
+                  {% if block.settings.feature_tag_1 != blank %}
+                    <span class="feature-tag">{{ block.settings.feature_tag_1 }}</span>
+                  {% endif %}
+                  {% if block.settings.feature_tag_2 != blank %}
+                    <span class="feature-tag">{{ block.settings.feature_tag_2 }}</span>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <div class="product-footer">
+                <form method="post" action="/cart/add" class="add-to-cart-form">
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  
+                  <button type="submit" 
+                          class="btn-add-cart"
+                          {% unless product.available %}disabled{% endunless %}>
+                    <span>
+                      {% if product.available %}
+                        ADD TO CART
+                      {% else %}
+                        SOLD OUT
+                      {% endif %}
+                    </span>
+                    <span class="price-wrapper">
+                      {% comment %} {% if product.compare_at_price > product.price %}
+                        <span class="price-compare">{{ product.compare_at_price | money }}</span>
+                      {% endif %} {% endcomment %}
+                      <span>{{ product.price | money }}</span>
+                    </span>
+                  </button>
+                </form>
+
+                {% if block.settings.promo_message != blank %}
+                  <div class="promo-message">
+                    {% if block.settings.promo_icon != blank %}
+                      <img src="{{ block.settings.promo_icon | image_url: width: 32 }}" 
+                           alt="" 
+                           class="promo-icon">
+                    {% endif %}
+                    {{ block.settings.promo_message }}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product List with Promo",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Shop Our Best Sellers"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Tablet)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Tablet)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Button Settings"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Shop Black Friday Sale"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    },
+    {
+      "type": "header",
+      "content": "Promotional Card"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_promo_card",
+      "label": "Show Promotional Card",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "promo_desktop_only",
+      "label": "Show on Desktop Only",
+      "default": true,
+      "info": "Hide promotional card on mobile devices"
+    },
+    {
+      "type": "image_picker",
+      "id": "promo_image",
+      "label": "Promo Image"
+    },
+    {
+      "type": "url",
+      "id": "promo_link",
+      "label": "Promo Link"
+    },
+    {
+      "type": "text",
+      "id": "promo_link_text",
+      "label": "Promo Link Text (for accessibility)",
+      "default": "Shop Sale"
+    },
+    {
+      "type": "text",
+      "id": "promo_button_text",
+      "label": "Promo Button Text",
+      "default": "Shop Black Friday Sale"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product Card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge Text",
+          "info": "e.g., 'Most Powerful', 'Celebrity Fave', 'Derm Approved'"
+        },
+        {
+          "type": "image_picker",
+          "id": "award_image",
+          "label": "Award Badge Image",
+          "info": "Optional award or certification badge"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_bogo",
+          "label": "Show BOGO Badge",
+          "default": false,
+          "info": "Display 'BEST SELLER"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_reviews",
+          "label": "Show Reviews",
+          "default": true
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Custom Description",
+          "info": "Short product description (1 line)"
+        },
+        {
+          "type": "text",
+          "id": "feature_tag_1",
+          "label": "Feature Tag 1",
+          "info": "e.g., '4-TECH POWER', 'QUICK 3 MIN'"
+        },
+        {
+          "type": "text",
+          "id": "feature_tag_2",
+          "label": "Feature Tag 2",
+          "info": "e.g., 'BOOSTS SKINCARE', '320 LEDS'"
+        },
+        {
+          "type": "text",
+          "id": "promo_message",
+          "label": "Promotional Message",
+          "default": "🔖 Buy One, Get One FREE!",
+          "info": "Shows below the Add to Cart button"
+        },
+        {
+          "type": "image_picker",
+          "id": "promo_icon",
+          "label": "Promo Icon",
+          "info": "Small icon next to promo message"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product List with Promo",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}
