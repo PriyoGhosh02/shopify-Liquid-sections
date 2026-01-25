@@ -1,0 +1,386 @@
+{% comment %}
+  Before After Gallery
+  2-row responsive layout + scroll + safe blank image handling
+  Added: Section background color and per-card background color customization
+{% endcomment %}
+
+<style>
+  .p-main-{{ section.id }}{
+      {% if section.settings.section_bg_color != blank %}
+    background-color: {{ section.settings.section_bg_color }};
+    {% endif %}
+  }
+  .product-section-{{ section.id }} {
+    padding: 60px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .product-section-{{ section.id }}__header {
+    text-align: left;
+    margin-bottom: 40px;
+  }
+
+  .product-section-{{ section.id }}__title {
+    font-size: 4.3rem;
+    font-weight: 400;
+    color: #232323;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+
+  .product-section-{{ section.id }}__desc {
+    font-size: 2.1rem;
+    color: #232323;
+    max-width: 800px;
+    margin: 0;
+    text-align: left;
+  }
+
+  /* ===== Scroll Grid ===== */
+  .product-section-{{ section.id }}__track {
+    display: grid;
+    grid-template-rows: repeat(1, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: calc((100% - 80px) / 3);
+    gap: 40px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  button.scroll-btn.scroll-prev, button.scroll-btn.scroll-next {
+    border: 2px solid #D59DAA;
+    color: #D59DAA;
+    font-size: 16px;
+  }
+  
+  button.scroll-btn.scroll-prev:hover, button.scroll-btn.scroll-next:hover {
+    border: 2px solid #D59DAA;
+    color: rgb(255, 255, 255);
+    background: #D59DAA;
+  }
+
+  .product-section-{{ section.id }}__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .product-section-{{ section.id }}__track {
+      grid-auto-columns: calc((100% - 40px) / 1);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .product-section-{{ section.id }}__track {
+      grid-auto-columns: 100%;
+    }
+      .product-section-{{ section.id }}__title {
+    font-size: 3rem;
+    line-height:3.2rem;
+    }
+  }
+
+  .product-section-{{ section.id }}__card {
+    display: flex;
+    flex-direction: column;
+    {% if section.settings.card_default_bg_color != blank %}
+    background-color: {{ section.settings.card_default_bg_color }};
+    {% endif %}
+    border-radius: 16px;
+    padding: 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Apply individual card background color if set */
+  {% for block in section.blocks %}
+    {% if block.settings.card_bg_color != blank %}
+      .product-section-{{ section.id }}__card[data-card-id="card-{{ forloop.index }}"] {
+        background-color: {{ block.settings.card_bg_color }} !important;
+      }
+    {% endif %}
+  {% endfor %}
+
+  .product-section-{{ section.id }}__compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .product-section-{{ section.id }}__img {
+    aspect-ratio: 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+  }
+
+  .product-section-{{ section.id }}__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .product-section-{{ section.id }}__label {
+    margin-top: 6px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    color: #777;
+    text-align: center;
+  }
+
+  .product-section-{{ section.id }}__footer {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .product-section-{{ section.id }}__thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .product-section-{{ section.id }}__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .product-section-{{ section.id }}__subtitle {
+    font-size: 1.2rem;
+    color: #666;
+  }
+
+  .product-section-{{ section.id }}__card-title {
+    font-size: 1.75rem;
+    font-weight: 300;
+    margin: 0;
+  }
+
+  /* ===== Scroll Buttons ===== */
+  .product-section-{{ section.id }} .scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    background: var(--color-white);
+    border: 2px solid var(--color-wine);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(41, 2, 23, 0.15);
+  }
+
+  .product-section-{{ section.id }} .scroll-btn:hover {
+    background: var(--color-wine);
+    color: var(--color-white);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .product-section-{{ section.id }} .scroll-prev { left: -12px; }
+  .product-section-{{ section.id }} .scroll-next { right: -12px; }
+
+  /* Mobile styles for scroll buttons */
+  @media (max-width: 767px) {
+    .product-section-{{ section.id }} .scroll-btn {
+      display: flex !important;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .product-section-{{ section.id }} .scroll-prev {
+      left: 8px;
+    }
+    
+    .product-section-{{ section.id }} .scroll-next {
+      right: 8px;
+    }
+    
+    /* Adjust button positioning for better mobile visibility */
+    .product-section-{{ section.id }} {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    button.scroll-btn.scroll-prev:hover,
+    button.scroll-btn.scroll-next:hover {
+      border: 2px solid #D59DAA;
+      color: #D59DAA;
+      background: transparent;
+    }
+    
+    button.scroll-btn.scroll-prev:active,
+    button.scroll-btn.scroll-next:active {
+      border: 2px solid #D59DAA;
+      color: rgb(255, 255, 255);
+      background: #D59DAA;
+    }
+  }
+</style>
+
+<section class="p-main-{{ section.id }}">
+  <section class="product-section-{{ section.id }}">
+  <div class="product-section-{{ section.id }}__header">
+    {% if section.settings.title != blank %}
+      <h2 class="product-section-{{ section.id }}__title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.description != blank %}
+      <div class="product-section-{{ section.id }}__desc">{{ section.settings.description }}</div>
+    {% endif %}
+  </div>
+
+  <button class="scroll-btn scroll-prev" data-dir="-1" aria-label="Previous">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+  
+  <div class="product-section-{{ section.id }}__track">
+    {% for block in section.blocks %}
+      <div class="product-section-{{ section.id }}__card" 
+           data-card-id="card-{{ forloop.index }}" 
+           {{ block.shopify_attributes }}
+           {% if block.settings.card_bg_color != blank %}
+           style="background-color: {{ block.settings.card_bg_color }};"
+           {% endif %}>
+        <div class="product-section-{{ section.id }}__compare">
+          <div>
+            <div class="product-section-{{ section.id }}__img">
+              {% if block.settings.before_image != blank %}
+                {{ block.settings.before_image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.before_label }}
+              {% else %}
+                Before
+              {% endif %}
+            </div>
+            <div class="product-section-{{ section.id }}__label">{{ block.settings.before_label }}</div>
+          </div>
+          <div>
+            <div class="product-section-{{ section.id }}__img">
+              {% if block.settings.after_image != blank %}
+                {{ block.settings.after_image | image_url: width: 800 | image_tag: loading: 'lazy', alt: block.settings.after_label }}
+              {% else %}
+                After
+              {% endif %}
+            </div>
+            <div class="product-section-{{ section.id }}__label">{{ block.settings.after_label }}</div>
+          </div>
+        </div>
+
+        {% if block.settings.product_url != blank %}
+          <a href="{{ block.settings.product_url }}" class="product-section-{{ section.id }}__footer-link">
+        {% endif %}
+
+        <div class="product-section-{{ section.id }}__footer">
+          {% if block.settings.product_image != blank %}
+            <div class="product-section-{{ section.id }}__thumb">
+              {{ block.settings.product_image | image_url: width: 100 | image_tag: loading: 'lazy' }}
+            </div>
+          {% endif %}
+
+          <div>
+            {% if block.settings.card_subtitle != blank %}
+              <div class="product-section-{{ section.id }}__subtitle">
+                {{ block.settings.card_subtitle }}
+              </div>
+            {% endif %}
+
+            {% if block.settings.card_title != blank %}
+              <h3 class="product-section-{{ section.id }}__card-title">
+                {{ block.settings.card_title }}
+              </h3>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if block.settings.product_url != blank %}
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  
+  <button class="scroll-btn scroll-next" data-dir="1" aria-label="Next">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </button>
+</section>
+</section>
+
+<script>
+(function () {
+  const section = document.querySelector('.product-section-{{ section.id }}');
+  if (!section) return;
+  const track = section.querySelector('.product-section-{{ section.id }}__track');
+  const buttons = section.querySelectorAll('.scroll-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dir = Number(btn.dataset.dir);
+      const columnWidth = track.clientWidth;
+      track.scrollBy({ left: dir * columnWidth, behavior: 'smooth' });
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Before After Gallery",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Section title", "default": "Real Results" },
+    { "type": "textarea", "id": "description", "label": "Section description", "default": "See the transformation our customers experienced" },
+    { "type": "color", "id": "section_bg_color", "label": "Section background color", "default": "#ffffff" },
+    { "type": "color", "id": "card_default_bg_color", "label": "Default card background color", "default": "#ffffff", "info": "This will be used if individual card color is not set" }
+  ],
+  "blocks": [
+    {
+      "type": "before_after_card",
+      "name": "Before / After Card",
+      "settings": [
+        { "type": "image_picker", "id": "before_image", "label": "Before image" },
+        { "type": "text", "id": "before_label", "label": "Before label", "default": "Day 1" },
+        { "type": "image_picker", "id": "after_image", "label": "After image" },
+        { "type": "text", "id": "after_label", "label": "After label", "default": "Day 30" },
+        { "type": "image_picker", "id": "product_image", "label": "Product image" },
+        { "type": "text", "id": "card_subtitle", "label": "Subtitle", "default": "Fine lines" },
+        { "type": "text", "id": "card_title", "label": "Title", "default": "Frown lines" },
+        { "type": "url", "id": "product_url", "label": "Product link" },
+        { "type": "color", "id": "card_bg_color", "label": "Card background color", "default": "#ffffff", "info": "Overrides default card color" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Before After Gallery",
+      "settings": {
+        "title": "Real Results",
+        "description": "See the transformation our customers experienced",
+        "section_bg_color": "#ffffff",
+        "card_default_bg_color": "#ffffff"
+      },
+      "blocks": [
+        { "type": "before_after_card" },
+        { "type": "before_after_card" },
+        { "type": "before_after_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}
