@@ -1,0 +1,1021 @@
+<style>
+ @import url('https://fonts.googleapis.com/css2?family=Delius+Unicase:wght@400;700&display=swap');
+
+  
+  /* Modern CSS Reset */
+  .holiday-sale-banner * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .holiday-sale-banner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    gap: 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  /* Animated Diagonal Background Pattern */
+  .holiday-sale-banner::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: 
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(255, 255, 255, 0.03) 20px,
+        rgba(255, 255, 255, 0.03) 40px
+      );
+    animation: moveBackground 20s linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes moveBackground {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  /* Responsive heights */
+  @media (min-width: 768px) {
+    .holiday-sale-banner {
+      height: 117px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner {
+      height: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .holiday-sale-banner::before {
+      display: none; /* Hide on mobile for performance */
+    }
+  }
+
+  .holiday-sale-banner__block {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    position: relative;
+    flex-shrink: 0;
+    padding: 0 30px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+  }
+
+  /* Parallelogram shape */
+  @media (min-width: 768px) {
+    .holiday-sale-banner__block {
+      transform: skewX(-10deg);
+      margin: 0 -10px;
+      padding: 0 50px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner__block {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform: translateY(100%) skewX(-8deg);
+      margin: 0;
+      padding: 0 15px;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .holiday-sale-banner__block.mobile-active {
+      transform: translateY(0) skewX(-8deg);
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 2;
+    }
+    
+    .holiday-sale-banner__block.mobile-exit {
+      transform: translateY(-100%) skewX(-8deg);
+      opacity: 0;
+    }
+  }
+
+  /* Hover effect for blocks */
+  .holiday-sale-banner__block:hover {
+    filter: brightness(1.1);
+    transform: skewX(-10deg) scale(1.02);
+    z-index: 3;
+  }
+
+  /* Mobile: Remove hover effect on touch devices */
+  @media (max-width: 767px) {
+    .holiday-sale-banner__block:hover {
+      transform: translateY(0) skewX(-8deg) scale(1);
+      filter: none;
+    }
+  }
+
+  /* Enhanced Diagonal Strip System - Multiple Interactive Strips */
+  .holiday-sale-banner__block.has-strips {
+    overflow: visible;
+  }
+
+  .holiday-sale-banner__block.has-strips::before,
+  .holiday-sale-banner__block.has-strips::after,
+  .holiday-sale-banner__block.has-strips .strip-3,
+  .holiday-sale-banner__block.has-strips .strip-4 {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    transition: all 0.4s ease;
+  }
+
+  /* Main Diagonal Strips */
+  .holiday-sale-banner__block.has-strips::before {
+    width: 4px;
+    height: 200%;
+    top: -50%;
+    left: 20%;
+    transform: rotate(-25deg);
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      var(--strip-color) 20%, 
+      var(--strip-color) 80%, 
+      transparent 100%
+    );
+    animation: stripGlow 3s ease-in-out infinite;
+  }
+
+  .holiday-sale-banner__block.has-strips::after {
+    width: 3px;
+    height: 200%;
+    top: -50%;
+    left: calc(20% + 12px);
+    transform: rotate(-25deg);
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      var(--strip-color-secondary) 20%, 
+      var(--strip-color-secondary) 80%, 
+      transparent 100%
+    );
+    animation: stripGlow 3s ease-in-out infinite 0.5s;
+  }
+
+  /* Additional Animated Strips (created with span elements) */
+  .strip-3 {
+    width: 2px;
+    height: 200%;
+    top: -50%;
+    left: calc(20% + 24px);
+    transform: rotate(-25deg);
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      var(--strip-color-tertiary) 20%, 
+      var(--strip-color-tertiary) 80%, 
+      transparent 100%
+    );
+    animation: stripGlow 3s ease-in-out infinite 1s;
+  }
+
+  .strip-4 {
+    width: 1px;
+    height: 200%;
+    top: -50%;
+    left: calc(20% + 30px);
+    transform: rotate(-25deg);
+    background: linear-gradient(to bottom, 
+      transparent 0%, 
+      var(--strip-color-quaternary) 20%, 
+      var(--strip-color-quaternary) 80%, 
+      transparent 100%
+    );
+    animation: stripGlow 3s ease-in-out infinite 1.5s;
+  }
+
+  @keyframes stripGlow {
+    0%, 100% {
+      opacity: 0.4;
+      transform: rotate(-25deg) scaleY(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: rotate(-25deg) scaleY(1.1);
+    }
+  }
+
+  /* Strip animations on hover */
+  .holiday-sale-banner__block.has-strips:hover::before {
+    animation: stripHover 0.6s ease-out;
+    opacity: 1;
+  }
+
+  .holiday-sale-banner__block.has-strips:hover::after {
+    animation: stripHover 0.6s ease-out 0.1s;
+    opacity: 1;
+  }
+
+  .holiday-sale-banner__block.has-strips:hover .strip-3 {
+    animation: stripHover 0.6s ease-out 0.2s;
+    opacity: 1;
+  }
+
+  .holiday-sale-banner__block.has-strips:hover .strip-4 {
+    animation: stripHover 0.6s ease-out 0.3s;
+    opacity: 1;
+  }
+
+  @keyframes stripHover {
+    0% {
+      transform: rotate(-25deg) translateX(0);
+    }
+    25% {
+      transform: rotate(-25deg) translateX(5px);
+    }
+    75% {
+      transform: rotate(-25deg) translateX(-5px);
+    }
+    100% {
+      transform: rotate(-25deg) translateX(0);
+    }
+  }
+
+  /* Mobile adjustments for strips */
+  @media (max-width: 767px) {
+    .holiday-sale-banner__block.has-strips::before {
+      width: 2px;
+      left: 15%;
+    }
+    
+    .holiday-sale-banner__block.has-strips::after {
+      width: 1px;
+      left: calc(15% + 6px);
+    }
+    
+    .strip-3,
+    .strip-4 {
+      display: none; /* Hide extra strips on mobile */
+    }
+  }
+
+  .holiday-sale-banner__text {
+    font-family: Helvetica, Arial, sans-serif;
+    z-index: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    white-space: nowrap;
+  }
+
+  /* Counter-skew the text */
+  @media (min-width: 768px) {
+    .holiday-sale-banner__text {
+      transform: skewX(10deg);
+      font-size: 48px;
+      line-height: 1.2;
+    }
+    
+    .holiday-sale-banner__text span {
+      padding: 0 2px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner__text {
+      transform: skewX(8deg);
+      font-size: 32px;
+      line-height: 1.2;
+      gap: 1px;
+    }
+    
+    .holiday-sale-banner__text span {
+      padding: 0 1px;
+    }
+  }
+
+  /* Text styling */
+  .holiday-sale-banner__text span {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  .holiday-sale-banner__text span:hover {
+    transform: translateY(-2px);
+  }
+
+  .holiday-sale-banner__text .text-bold {
+    font-weight: 700 !important;
+  }
+
+  .holiday-sale-banner__text .text-normal {
+    font-weight: 400 !important;
+  }
+
+  /* Decorative Animated Stripe Background */
+  .holiday-sale-banner__stripe {
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+    opacity: 0.8;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      currentColor 10px,
+      currentColor 20px
+    );
+    animation: stripeMove 10s linear infinite;
+  }
+
+  @keyframes stripeMove {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 40px 40px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .holiday-sale-banner__stripe {
+      height: 80px;
+      top: 50%;
+      transform: translateY(-50%) skewY(-3deg);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner__stripe {
+      height: 30px;
+      top: 50%;
+      transform: translateY(-50%) skewY(-2deg);
+      animation: stripeMove 20s linear infinite;
+    }
+  }
+
+  /* Block styling with floating effect */
+  .holiday-sale-banner__block {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .holiday-sale-banner__block:hover {
+    box-shadow: 
+      0 8px 24px rgba(0, 0, 0, 0.25),
+      0 0 0 1px rgba(255, 255, 255, 0.2),
+      0 0 20px var(--strip-color);
+  }
+
+  /* Animation for attention */
+  @keyframes pulse {
+    0%, 100% { 
+      transform: skewX(-10deg) scale(1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    50% { 
+      transform: skewX(-10deg) scale(1.05);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 0 30px var(--strip-color);
+    }
+  }
+  
+  .holiday-sale-banner__block.highlight {
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Floating particles/snow effect */
+  .holiday-sale-banner__particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .holiday-sale-banner__particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: floatParticle 15s linear infinite;
+  }
+
+  @keyframes floatParticle {
+    0% {
+      transform: translateY(-10px) translateX(0);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    90% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(120px) translateX(20px);
+      opacity: 0;
+    }
+  }
+
+  /* Mobile Carousel Navigation Dots */
+  .holiday-sale-banner__mobile-dots {
+    display: none;
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    gap: 6px;
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner__mobile-dots {
+      display: flex;
+    }
+  }
+
+  .holiday-sale-banner__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .holiday-sale-banner__dot.active {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.2);
+  }
+
+  /* Mobile Previous/Next Buttons */
+  .holiday-sale-banner__mobile-nav {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    opacity: 0;
+  }
+
+  .holiday-sale-banner:hover .holiday-sale-banner__mobile-nav {
+    opacity: 1;
+  }
+
+  @media (max-width: 767px) {
+    .holiday-sale-banner__mobile-nav {
+      display: flex;
+    }
+  }
+
+  .holiday-sale-banner__mobile-nav.prev {
+    left: 10px;
+  }
+
+  .holiday-sale-banner__mobile-nav.next {
+    right: 10px;
+  }
+
+  .holiday-sale-banner__mobile-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+  }
+</style>
+
+<div class="holiday-sale-banner" id="holiday-sale-banner-{{ section.id }}">
+  {% if section.settings.show_particles %}
+  <div class="holiday-sale-banner__particles" id="particles-{{ section.id }}">
+    <!-- Particles will be generated by JavaScript -->
+  </div>
+  {% endif %}
+  
+  {% if section.settings.show_stripe %}
+    <div class="holiday-sale-banner__stripe" style="color: {{ section.settings.stripe_color }};"></div>
+  {% endif %}
+
+  {% for block in section.blocks %}
+    {% assign strip_class = '' %}
+    {% if block.settings.show_strips %}
+      {% assign strip_class = 'has-strips' %}
+    {% endif %}
+    
+    {% assign highlight_class = '' %}
+    {% if block.settings.highlight_block %}
+      {% assign highlight_class = 'highlight' %}
+    {% endif %}
+    
+    <div 
+      class="holiday-sale-banner__block {{ strip_class }} {{ highlight_class }}{% if forloop.first %} mobile-active{% endif %}"
+      style="
+        background-color: {{ block.settings.block_bg_color }};
+        {% if block.settings.block_border_color != blank %}
+          border: 1px solid {{ block.settings.block_border_color }};
+        {% endif %}
+        --strip-color: {{ block.settings.strip_color }};
+        --strip-color-secondary: {{ block.settings.strip_color_secondary }};
+        --strip-color-tertiary: {{ block.settings.strip_color_tertiary }};
+        --strip-color-quaternary: {{ block.settings.strip_color_quaternary }};
+      " 
+      data-strip-color
+      data-block-index="{{ forloop.index0 }}"
+      {{ block.shopify_attributes }}>
+      
+      {% if block.settings.show_strips %}
+        <!-- Additional strip elements -->
+        <span class="strip-3"></span>
+        <span class="strip-4"></span>
+      {% endif %}
+      
+      <div class="holiday-sale-banner__text">
+        {% if block.settings.text_part1 != blank %}
+          <span 
+            class="{% if block.settings.font_weight1 == '700' %}text-bold{% else %}text-normal{% endif %}"
+            style="
+              color: {{ block.settings.text_color1 }};
+              {% if block.settings.text_shadow1 %}
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+              {% endif %}
+            ">
+            {{ block.settings.text_part1 }}
+          </span>
+        {% endif %}
+        {% if block.settings.text_part2 != blank %}
+          <span 
+            class="{% if block.settings.font_weight2 == '700' %}text-bold{% else %}text-normal{% endif %}"
+            style="
+              color: {{ block.settings.text_color2 }};
+              {% if block.settings.text_shadow2 %}
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+              {% endif %}
+            ">
+            {{ block.settings.text_part2 }}
+          </span>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+
+  <!-- Mobile Navigation Dots -->
+  <div class="holiday-sale-banner__mobile-dots" id="mobile-dots-{{ section.id }}">
+    {% for block in section.blocks %}
+      <div class="holiday-sale-banner__dot{% if forloop.first %} active{% endif %}" 
+           data-index="{{ forloop.index0 }}"></div>
+    {% endfor %}
+  </div>
+
+  <!-- Mobile Navigation Buttons -->
+  <button class="holiday-sale-banner__mobile-nav prev" data-direction="prev">‹</button>
+  <button class="holiday-sale-banner__mobile-nav next" data-direction="next">›</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const banner = document.querySelector('#holiday-sale-banner-{{ section.id }}');
+  const particlesContainer = document.getElementById('particles-{{ section.id }}');
+  const blocks = banner.querySelectorAll('.holiday-sale-banner__block');
+  const dots = banner.querySelectorAll('.holiday-sale-banner__dot');
+  const prevBtn = banner.querySelector('.holiday-sale-banner__mobile-nav.prev');
+  const nextBtn = banner.querySelector('.holiday-sale-banner__mobile-nav.next');
+  
+  let currentIndex = 0;
+  let autoRotateInterval;
+  const rotateInterval = 3000; // 3 seconds
+  const isMobile = window.innerWidth <= 767;
+  
+  // Initialize particles
+  if (particlesContainer) {
+    for (let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'holiday-sale-banner__particle';
+      
+      const size = Math.random() * 4 + 1;
+      const startX = Math.random() * 100;
+      const duration = Math.random() * 10 + 15;
+      const delay = Math.random() * 15;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      particle.style.left = `${startX}%`;
+      particle.style.animationDuration = `${duration}s`;
+      particle.style.animationDelay = `${delay}s`;
+      particle.style.backgroundColor = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.3})`;
+      
+      particlesContainer.appendChild(particle);
+    }
+  }
+  
+  // Mobile rotation functionality
+  function initMobileRotation() {
+    if (!isMobile || blocks.length <= 1) return;
+    
+    // Start auto rotation
+    startAutoRotation();
+    
+    // Setup navigation buttons
+    prevBtn.addEventListener('click', () => navigateToBlock(currentIndex - 1));
+    nextBtn.addEventListener('click', () => navigateToBlock(currentIndex + 1));
+    
+    // Setup dot navigation
+    dots.forEach(dot => {
+      dot.addEventListener('click', function() {
+        const index = parseInt(this.getAttribute('data-index'));
+        navigateToBlock(index);
+      });
+    });
+    
+    // Pause auto-rotation on hover/touch
+    banner.addEventListener('mouseenter', pauseAutoRotation);
+    banner.addEventListener('mouseleave', startAutoRotation);
+    banner.addEventListener('touchstart', pauseAutoRotation);
+    banner.addEventListener('touchend', () => {
+      setTimeout(startAutoRotation, 3000);
+    });
+  }
+  
+  function navigateToBlock(index) {
+    // Handle wrap-around
+    if (index < 0) index = blocks.length - 1;
+    if (index >= blocks.length) index = 0;
+    
+    // Update current index
+    currentIndex = index;
+    
+    // Update blocks visibility
+    blocks.forEach((block, i) => {
+      block.classList.remove('mobile-active', 'mobile-exit');
+      
+      if (i === currentIndex) {
+        // Add active class after a brief delay for smooth transition
+        setTimeout(() => {
+          block.classList.add('mobile-active');
+        }, 50);
+      } else if (i === (currentIndex === 0 ? blocks.length - 1 : currentIndex - 1)) {
+        // Add exit animation to previous block
+        block.classList.add('mobile-exit');
+      }
+    });
+    
+    // Update dots
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentIndex);
+    });
+    
+    // Reset auto rotation timer
+    resetAutoRotation();
+  }
+  
+  function startAutoRotation() {
+    if (!isMobile || blocks.length <= 1) return;
+    
+    clearInterval(autoRotateInterval);
+    autoRotateInterval = setInterval(() => {
+      navigateToBlock(currentIndex + 1);
+    }, rotateInterval);
+  }
+  
+  function pauseAutoRotation() {
+    clearInterval(autoRotateInterval);
+  }
+  
+  function resetAutoRotation() {
+    pauseAutoRotation();
+    startAutoRotation();
+  }
+  
+  // Initialize mobile rotation if on mobile
+  if (isMobile) {
+    initMobileRotation();
+  }
+  
+  // Handle window resize
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      const newIsMobile = window.innerWidth <= 767;
+      
+      if (newIsMobile !== isMobile) {
+        // Reload the page to reinitialize
+        window.location.reload();
+      }
+    }, 250);
+  });
+  
+  // Interactive strip hover effect (for desktop)
+  blocks.forEach(block => {
+    block.addEventListener('mouseenter', function() {
+      if (isMobile) return;
+      const strips = this.querySelectorAll('.strip-3, .strip-4');
+      strips.forEach(strip => {
+        strip.style.animationPlayState = 'paused';
+      });
+    });
+    
+    block.addEventListener('mouseleave', function() {
+      if (isMobile) return;
+      const strips = this.querySelectorAll('.strip-3, .strip-4');
+      strips.forEach(strip => {
+        strip.style.animationPlayState = 'running';
+      });
+    });
+  });
+  
+  // Add click effect to blocks (for desktop)
+  blocks.forEach(block => {
+    block.addEventListener('click', function() {
+      if (isMobile) return;
+      this.style.transform = 'skewX(-10deg) scale(0.98)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Holiday Sale Banner",
+  "tag": "section",
+  "class": "section-holiday-sale",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#8B1A1A"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stripe",
+      "label": "Show Animated Stripe",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "stripe_color",
+      "label": "Stripe Color",
+      "default": "#C897B8"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_particles",
+      "label": "Show Floating Particles",
+      "default": true,
+      "info": "Adds floating particle/snow effect"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text_block",
+      "name": "Text Block",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Text Part 1"
+        },
+        {
+          "type": "text",
+          "id": "text_part1",
+          "label": "Text Part 1",
+          "default": "Holiday "
+        },
+        {
+          "type": "color",
+          "id": "text_color1",
+          "label": "Text Color 1",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "font_weight1",
+          "label": "Font Weight 1",
+          "options": [
+            {
+              "value": "400",
+              "label": "Normal"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            }
+          ],
+          "default": "400"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_shadow1",
+          "label": "Add Text Shadow",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Text Part 2"
+        },
+        {
+          "type": "text",
+          "id": "text_part2",
+          "label": "Text Part 2",
+          "default": "Sale"
+        },
+        {
+          "type": "color",
+          "id": "text_color2",
+          "label": "Text Color 2",
+          "default": "#ffffff"
+        },
+        {
+          "type": "select",
+          "id": "font_weight2",
+          "label": "Font Weight 2",
+          "options": [
+            {
+              "value": "400",
+              "label": "Normal"
+            },
+            {
+              "value": "700",
+              "label": "Bold"
+            }
+          ],
+          "default": "400"
+        },
+        {
+          "type": "checkbox",
+          "id": "text_shadow2",
+          "label": "Add Text Shadow",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "Block Settings"
+        },
+        {
+          "type": "color",
+          "id": "block_bg_color",
+          "label": "Block Background Color",
+          "default": "transparent"
+        },
+        {
+          "type": "color",
+          "id": "block_border_color",
+          "label": "Block Border Color",
+          "default": "transparent",
+          "info": "Optional border around the block"
+        },
+        {
+          "type": "header",
+          "content": "Diagonal Strip Settings"
+        },
+        {
+          "type": "color",
+          "id": "strip_color",
+          "label": "Main Strip Color",
+          "default": "rgba(255, 255, 255, 0.4)"
+        },
+        {
+          "type": "color",
+          "id": "strip_color_secondary",
+          "label": "Secondary Strip Color",
+          "default": "rgba(255, 255, 255, 0.3)"
+        },
+        {
+          "type": "color",
+          "id": "strip_color_tertiary",
+          "label": "Tertiary Strip Color",
+          "default": "rgba(255, 255, 255, 0.2)"
+        },
+        {
+          "type": "color",
+          "id": "strip_color_quaternary",
+          "label": "Quaternary Strip Color",
+          "default": "rgba(255, 255, 255, 0.1)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_strips",
+          "label": "Show Interactive Diagonal Strips",
+          "default": true,
+          "info": "Adds animated, interactive diagonal strips"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight_block",
+          "label": "Pulse Animation",
+          "default": false,
+          "info": "Add pulsing animation for attention"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Interactive Holiday Sale Banner",
+      "settings": {
+        "background_color": "#8B1A1A",
+        "show_stripe": true,
+        "stripe_color": "#C897B8",
+        "show_particles": true
+      },
+      "blocks": [
+        {
+          "type": "text_block",
+          "settings": {
+            "text_part1": "Holiday ",
+            "text_color1": "#ffffff",
+            "font_weight1": "400",
+            "text_shadow1": false,
+            "text_part2": "Sale",
+            "text_color2": "#ffffff",
+            "font_weight2": "700",
+            "text_shadow2": false,
+            "block_bg_color": "transparent",
+            "block_border_color": "transparent",
+            "strip_color": "rgba(255, 255, 255, 0.4)",
+            "strip_color_secondary": "rgba(255, 255, 255, 0.3)",
+            "strip_color_tertiary": "rgba(255, 255, 255, 0.2)",
+            "strip_color_quaternary": "rgba(255, 255, 255, 0.1)",
+            "show_strips": true,
+            "highlight_block": false
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "text_part1": "Buy 1 Get 1 ",
+            "text_color1": "#8B1A1A",
+            "font_weight1": "400",
+            "text_shadow1": false,
+            "text_part2": "FREE",
+            "text_color2": "#8B1A1A",
+            "font_weight2": "700",
+            "text_shadow2": true,
+            "block_bg_color": "#C897B8",
+            "block_border_color": "transparent",
+            "strip_color": "rgba(139, 26, 26, 0.4)",
+            "strip_color_secondary": "rgba(139, 26, 26, 0.3)",
+            "strip_color_tertiary": "rgba(139, 26, 26, 0.2)",
+            "strip_color_quaternary": "rgba(139, 26, 26, 0.1)",
+            "show_strips": true,
+            "highlight_block": true
+          }
+        },
+        {
+          "type": "text_block",
+          "settings": {
+            "text_part1": "Shorter days. ",
+            "text_color1": "#ffffff",
+            "font_weight1": "400",
+            "text_shadow1": false,
+            "text_part2": "Longer glow.",
+            "text_color2": "#ffffff",
+            "font_weight2": "700",
+            "text_shadow2": false,
+            "block_bg_color": "transparent",
+            "block_border_color": "transparent",
+            "strip_color": "rgba(255, 255, 255, 0.4)",
+            "strip_color_secondary": "rgba(255, 255, 255, 0.3)",
+            "strip_color_tertiary": "rgba(255, 255, 255, 0.2)",
+            "strip_color_quaternary": "rgba(255, 255, 255, 0.1)",
+            "show_strips": true,
+            "highlight_block": false
+          }
+        }
+      ]
+    }
+  ],
+  "max_blocks": 4
+}
+{% endschema %}
