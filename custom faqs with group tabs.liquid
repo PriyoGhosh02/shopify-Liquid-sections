@@ -1,0 +1,1540 @@
+{{ 'faq-categories.css' | asset_url | stylesheet_tag }}
+
+<style>
+/* FAQ Categories - Main Styles */
+.faq-section {
+  min-height: 100vh;
+}
+
+.faq-container {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.faq-main-heading {
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.faq-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Sidebar */
+.faq-sidebar {
+  flex-shrink: 0;
+}
+
+.faq-sidebar-inner {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
+}
+
+.sidebar-title {
+  font-weight: 600;
+}
+
+.category-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-btn {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--category-color);
+  font-size: 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.category-btn:hover {
+  background: var(--hover-bg);
+}
+
+.category-btn.active {
+  background: var(--active-bg);
+  color: var(--active-color);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.category-icon {
+  font-size: 18px;
+}
+
+.faq-count {
+  margin-left: auto;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.category-btn.active .faq-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* CTA Box */
+.sidebar-cta {
+  border-top: 1px solid #e5e7eb;
+}
+
+.cta-image {
+  width: 100%;
+  height: auto;
+  margin-bottom: 16px;
+  object-fit: cover;
+}
+
+.cta-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+
+.cta-text {
+  font-size: 14px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.cta-button {
+  display: block;
+  width: 100%;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  opacity: 0.9;
+}
+
+.cta-subtext {
+  font-size: 11px;
+  text-align: center;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Content Area */
+.faq-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.faq-content-inner {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Search */
+.faq-search-wrapper {
+  margin-bottom: 32px;
+}
+
+.search-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.faq-search-input {
+  width: 100%;
+  padding: 12px 48px 12px 16px;
+  border: 2px solid;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.faq-search-input:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* Category Title */
+.category-title {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* FAQ Accordion */
+.faq-category-group {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.faq-accordion {
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Custom Scrollbar */
+.faq-accordion::-webkit-scrollbar {
+  width: 6px;
+}
+
+.faq-accordion::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.faq-accordion::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.faq-accordion::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.faq-item {
+  border-bottom: 1px solid;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.faq-question:hover {
+  color: var(--hover-color);
+}
+
+.faq-question:hover .chevron-icon {
+  color: var(--hover-color);
+}
+
+.question-text {
+  padding-right: 20px;
+}
+
+.chevron-icon {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+  stroke-width: 2;
+}
+
+.faq-item.active .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.faq-answer-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.faq-item.active .faq-answer-wrapper {
+  max-height: 500px;
+}
+
+.faq-answer {
+  padding-top: 8px;
+  padding-bottom: 12px;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  padding: 64px 20px;
+  font-size: 16px;
+}
+
+/* Empty Category Message */
+.empty-category {
+  text-align: center;
+  padding: 40px 20px;
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+/* Responsive */
+@media (min-width: 1024px) {
+.faq-layout {
+    position: relative;
+}
+.faq-content {
+    position: sticky;
+    top: 100px;
+}
+}
+@media (max-width: 1024px) {
+  .faq-layout {
+    flex-direction: column;
+  }
+    .faq-content {
+    width: 100%;
+}
+
+  .faq-sidebar {
+    width: 100% !important;
+  }
+
+  .faq-sidebar-inner {
+    position: static;
+  }
+
+  .category-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .category-btn {
+    flex: 1;
+    min-width: 150px;
+  }
+
+  .sidebar-cta {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .faq-main-heading {
+    font-size: 32px !important;
+  }
+
+  .category-title {
+    font-size: 22px !important;
+  }
+
+  .faq-content-inner {
+    padding: 20px !important;
+  }
+
+  .faq-sidebar-inner {
+    padding: 20px !important;
+  }
+
+  .category-nav {
+    flex-direction: column;
+  }
+
+  .category-btn {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-section {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .faq-main-heading {
+    font-size: 28px !important;
+  }
+
+  .search-label {
+    font-size: 11px !important;
+  }
+
+  .faq-search-input {
+    padding: 10px 40px 10px 12px;
+    font-size: 14px;
+  }
+}
+</style>
+
+{%- liquid
+  # Build array of category names for validation
+  assign category_names = ''
+  for block in section.blocks
+    if block.type == 'category'
+      if category_names != ''
+        assign category_names = category_names | append: '|||'
+      endif
+      assign category_names = category_names | append: block.settings.category_name
+    endif
+  endfor
+  assign categories_array = category_names | split: '|||'
+-%}
+
+<div class="faq-section" style="
+  background: linear-gradient(to bottom right, {{ section.settings.bg_gradient_from }}, {{ section.settings.bg_gradient_to }});
+  padding: {{ section.settings.padding_top }}px {{ section.settings.padding_horizontal }}px {{ section.settings.padding_bottom }}px;
+">
+  <div class="faq-container" style="max-width: {{ section.settings.container_width }}px;">
+    
+    {%- if section.settings.show_heading -%}
+      <h1 class="faq-main-heading" style="
+        color: {{ section.settings.heading_color }};
+        font-size: {{ section.settings.heading_size }}px;
+        text-align: {{ section.settings.heading_align }};
+        margin-bottom: {{ section.settings.heading_margin }}px;
+      ">
+        {{ section.settings.heading }}
+      </h1>
+    {%- endif -%}
+
+    <div class="faq-layout">
+      
+      {%- if section.settings.show_sidebar -%}
+      <!-- Left Sidebar - Categories -->
+      <div class="faq-sidebar" style="width: {{ section.settings.sidebar_width }}px;">
+        <div class="faq-sidebar-inner" style="
+          background: {{ section.settings.sidebar_bg }};
+          border-radius: {{ section.settings.sidebar_radius }}px;
+          padding: {{ section.settings.sidebar_padding }}px;
+        ">
+          
+          <h2 class="sidebar-title" style="
+            color: {{ section.settings.sidebar_title_color }};
+            font-size: {{ section.settings.sidebar_title_size }}px;
+            margin-bottom: {{ section.settings.sidebar_title_margin }}px;
+          ">
+            {{ section.settings.sidebar_title }}
+          </h2>
+
+          <nav class="category-nav">
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'category' -%}
+                {%- liquid
+                  # Count FAQs in this category
+                  assign faq_count = 0
+                  for faq_block in section.blocks
+                    if faq_block.type == 'faq'
+                      assign faq_category = faq_block.settings.parent_category | strip | downcase
+                      assign current_category = block.settings.category_name | strip | downcase
+                      if faq_category == current_category
+                        assign faq_count = faq_count | plus: 1
+                      endif
+                    endif
+                  endfor
+                -%}
+                
+                <button 
+                  class="category-btn" 
+                  data-category="{{ block.settings.category_name | strip | downcase | handleize }}"
+                  data-category-name="{{ block.settings.category_name }}"
+                  style="
+                    --active-bg: {{ section.settings.active_category_bg }};
+                    --active-color: {{ section.settings.active_category_color }};
+                    --hover-bg: {{ section.settings.hover_category_bg }};
+                    --category-color: {{ section.settings.category_color }};
+                    border-radius: {{ section.settings.category_radius }}px;
+                  "
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if block.settings.show_icon and block.settings.icon != blank -%}
+                    <span class="category-icon">{{ block.settings.icon }}</span>
+                  {%- endif -%}
+                  {{ block.settings.category_name }}
+                  {%- if block.settings.show_count -%}
+                    <span class="faq-count">{{ faq_count }}</span>
+                  {%- endif -%}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          </nav>
+
+          {%- if section.settings.show_cta_box -%}
+          <!-- CTA Section -->
+          <div class="sidebar-cta" style="
+            margin-top: {{ section.settings.cta_margin_top }}px;
+            padding-top: {{ section.settings.cta_padding_top }}px;
+          ">
+            {%- if section.settings.cta_image != blank -%}
+              <img 
+                src="{{ section.settings.cta_image | image_url: width: 400 }}" 
+                alt="{{ section.settings.cta_image.alt | escape }}"
+                class="cta-image"
+                loading="lazy"
+                style="border-radius: {{ section.settings.cta_image_radius }}px;"
+              >
+            {%- endif -%}
+            
+            <h3 class="cta-title" style="
+              color: {{ section.settings.cta_title_color }};
+              font-size: {{ section.settings.cta_title_size }}px;
+            ">
+              {{ section.settings.cta_title }}
+            </h3>
+            
+            <p class="cta-text" style="color: {{ section.settings.cta_text_color }};">
+              {{ section.settings.cta_text }}
+            </p>
+            
+            {%- if section.settings.cta_button_text != blank -%}
+              <a 
+                href="{{ section.settings.cta_button_link }}" 
+                class="cta-button"
+                style="
+                  background: {{ section.settings.cta_button_bg }};
+                  color: {{ section.settings.cta_button_color }};
+                  border-radius: {{ section.settings.cta_button_radius }}px;
+                "
+              >
+                {{ section.settings.cta_button_text }}
+              </a>
+            {%- endif -%}
+            
+            {%- if section.settings.cta_subtext != blank -%}
+              <p class="cta-subtext" style="color: {{ section.settings.cta_subtext_color }};">
+                {{ section.settings.cta_subtext }}
+              </p>
+            {%- endif -%}
+          </div>
+          {%- endif -%}
+          
+        </div>
+      </div>
+      {%- endif -%}
+
+      <!-- Right Content - FAQ Items -->
+      <div class="faq-content">
+        <div class="faq-content-inner" style="
+          background: {{ section.settings.content_bg }};
+          border-radius: {{ section.settings.content_radius }}px;
+          padding: {{ section.settings.content_padding }}px;
+        ">
+          
+          {%- if section.settings.show_search -%}
+          <!-- Search Bar -->
+          <div class="faq-search-wrapper" style="margin-bottom: {{ section.settings.search_margin }}px;">
+            {%- if section.settings.search_label != blank -%}
+              <label class="search-label" style="
+                color: {{ section.settings.search_label_color }};
+                font-size: {{ section.settings.search_label_size }}px;
+              ">
+                {{ section.settings.search_label }}
+              </label>
+            {%- endif -%}
+            
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                id="faq-search"
+                placeholder="{{ section.settings.search_placeholder }}"
+                class="faq-search-input"
+                style="
+                  border-radius: {{ section.settings.search_radius }}px;
+                  border-color: {{ section.settings.search_border_color }};
+                  --focus-color: {{ section.settings.search_focus_color }};
+                "
+              >
+              {%- if section.settings.show_search_icon -%}
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              {%- endif -%}
+            </div>
+          </div>
+          {%- endif -%}
+
+          <!-- Category Title -->
+          <h2 class="category-title" style="
+            color: {{ section.settings.category_title_color }};
+            font-size: {{ section.settings.category_title_size }}px;
+            margin-bottom: {{ section.settings.category_title_margin }}px;
+          ">
+            <span id="active-category-name">
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'category' -%}
+                  {{ block.settings.category_name }}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </span>
+          </h2>
+
+          <!-- FAQ Categories -->
+          {%- for category_block in section.blocks -%}
+            {%- if category_block.type == 'category' -%}
+              {%- liquid
+                assign category_slug = category_block.settings.category_name | strip | downcase | handleize
+                assign category_name_lower = category_block.settings.category_name | strip | downcase
+                
+                # Count FAQs for this category
+                assign category_faq_count = 0
+                for faq_block in section.blocks
+                  if faq_block.type == 'faq'
+                    assign faq_category = faq_block.settings.parent_category | strip | downcase
+                    if faq_category == category_name_lower
+                      assign category_faq_count = category_faq_count | plus: 1
+                    endif
+                  endif
+                endfor
+              -%}
+              
+              <div 
+                class="faq-category-group" 
+                data-category-id="{{ category_slug }}"
+                data-category-name="{{ category_block.settings.category_name }}"
+                style="display: none;"
+              >
+                <div class="faq-accordion">
+                  {%- assign has_faqs = false -%}
+                  
+                  {%- for faq_block in section.blocks -%}
+                    {%- if faq_block.type == 'faq' -%}
+                      {%- liquid
+                        assign faq_category = faq_block.settings.parent_category | strip | downcase
+                        assign current_category = category_block.settings.category_name | strip | downcase
+                      -%}
+                      
+                      {%- if faq_category == current_category -%}
+                        {%- assign has_faqs = true -%}
+                        <div 
+                          class="faq-item" 
+                          data-search-content="{{ faq_block.settings.question | escape | downcase }} {{ faq_block.settings.answer | strip_html | escape | downcase }}"
+                          data-faq-category="{{ faq_category }}"
+                          style="border-color: {{ section.settings.faq_border_color }};"
+                          {{ faq_block.shopify_attributes }}
+                        >
+                          <button 
+                            class="faq-question"
+                            style="
+                              color: {{ section.settings.question_color }};
+                              --hover-color: {{ section.settings.question_hover_color }};
+                            "
+                          >
+                            <span class="question-text">{{ faq_block.settings.question }}</span>
+                            <svg 
+                              class="chevron-icon" 
+                              width="24" 
+                              height="24" 
+                              viewBox="0 0 24 24" 
+                              fill="none" 
+                              stroke="currentColor"
+                              style="color: {{ section.settings.chevron_color }};"
+                            >
+                              <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                          </button>
+                          
+                          <div class="faq-answer-wrapper">
+                            <div 
+                              class="faq-answer" 
+                              style="color: {{ section.settings.answer_color }};"
+                            >
+                              {{ faq_block.settings.answer }}
+                            </div>
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    {%- endif -%}
+                  {%- endfor -%}
+                  
+                  {%- unless has_faqs -%}
+                    <div class="empty-category">
+                      <p>No FAQs available in this category yet.</p>
+                      <p style="font-size: 13px; margin-top: 8px;">Add FAQ items with category: <strong>"{{ category_block.settings.category_name }}"</strong></p>
+                    </div>
+                  {%- endunless -%}
+                </div>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
+          <!-- No Results Message -->
+          <div class="no-results" style="display: none; color: {{ section.settings.no_results_color }};">
+            <p>{{ section.settings.no_results_text }}</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  class FAQCategories {
+    constructor(section) {
+      this.section = section;
+      this.categoryBtns = section.querySelectorAll('.category-btn');
+      this.categoryGroups = section.querySelectorAll('.faq-category-group');
+      this.faqItems = section.querySelectorAll('.faq-item');
+      this.searchInput = section.querySelector('#faq-search');
+      this.categoryTitle = section.querySelector('#active-category-name');
+      this.noResults = section.querySelector('.no-results');
+      this.activeCategory = null;
+
+      this.init();
+    }
+
+    init() {
+      // Set first category as active
+      if (this.categoryBtns.length > 0) {
+        this.setActiveCategory(
+          this.categoryBtns[0].dataset.category,
+          this.categoryBtns[0].dataset.categoryName
+        );
+      }
+
+      // Category click handlers
+      this.categoryBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          this.setActiveCategory(btn.dataset.category, btn.dataset.categoryName);
+        });
+      });
+
+      // FAQ accordion handlers
+      this.faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        question.addEventListener('click', () => {
+          this.toggleFAQ(item);
+        });
+      });
+
+      // Search handler
+      if (this.searchInput) {
+        this.searchInput.addEventListener('input', (e) => {
+          this.handleSearch(e.target.value);
+        });
+      }
+    }
+
+    setActiveCategory(categoryId, categoryName) {
+      this.activeCategory = categoryId;
+
+      // Update button states
+      this.categoryBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === categoryId);
+      });
+
+      // Show/hide category groups
+      this.categoryGroups.forEach(group => {
+        group.style.display = group.dataset.categoryId === categoryId ? 'block' : 'none';
+      });
+
+      // Update category title
+      if (this.categoryTitle && categoryName) {
+        this.categoryTitle.textContent = categoryName;
+      }
+
+      // Reset search
+      if (this.searchInput) {
+        this.searchInput.value = '';
+      }
+      this.resetSearch();
+    }
+
+    toggleFAQ(item) {
+      const isOpen = item.classList.contains('active');
+      
+      // Close all FAQs if accordion behavior is 'single'
+      {% if section.settings.accordion_behavior == 'single' %}
+      const activeCategoryGroup = this.section.querySelector(`.faq-category-group[data-category-id="${this.activeCategory}"]`);
+      if (activeCategoryGroup) {
+        activeCategoryGroup.querySelectorAll('.faq-item').forEach(faq => faq.classList.remove('active'));
+      }
+      {% endif %}
+
+      // Toggle current FAQ
+      item.classList.toggle('active', !isOpen);
+    }
+
+    handleSearch(query) {
+      const searchTerm = query.toLowerCase().trim();
+      
+      if (searchTerm === '') {
+        this.resetSearch();
+        return;
+      }
+
+      let visibleCount = 0;
+
+      // Search in active category only
+      const activeGroup = this.section.querySelector(`.faq-category-group[data-category-id="${this.activeCategory}"]`);
+      if (activeGroup) {
+        const items = activeGroup.querySelectorAll('.faq-item');
+        items.forEach(item => {
+          const content = item.dataset.searchContent || '';
+          const matches = content.includes(searchTerm);
+          item.style.display = matches ? 'block' : 'none';
+          if (matches) visibleCount++;
+        });
+      }
+
+      // Show/hide no results message
+      if (this.noResults) {
+        this.noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      }
+
+      // Hide empty category message during search
+      const emptyMsg = activeGroup?.querySelector('.empty-category');
+      if (emptyMsg) {
+        emptyMsg.style.display = 'none';
+      }
+    }
+
+    resetSearch() {
+      this.faqItems.forEach(item => {
+        item.style.display = 'block';
+      });
+      if (this.noResults) {
+        this.noResults.style.display = 'none';
+      }
+      
+      // Show empty category messages if needed
+      this.categoryGroups.forEach(group => {
+        const emptyMsg = group.querySelector('.empty-category');
+        if (emptyMsg) {
+          emptyMsg.style.display = 'block';
+        }
+      });
+    }
+  }
+
+  // Initialize all FAQ sections
+  document.addEventListener('DOMContentLoaded', () => {
+    const faqSections = document.querySelectorAll('.faq-section');
+    faqSections.forEach(section => new FAQCategories(section));
+  });
+
+  // Reinitialize on Shopify theme editor events
+  if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', (event) => {
+      new FAQCategories(event.target.querySelector('.faq-section'));
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "FAQ with Categories",
+  "tag": "section",
+  "class": "faq-categories-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_heading",
+      "label": "Show Main Heading",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Main Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading Size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Heading Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_margin",
+      "label": "Heading Bottom Margin",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "label": "Container Max Width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1300
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding Top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding Bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Padding Horizontal",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_from",
+      "label": "Background Gradient From",
+      "default": "#fdf2f8"
+    },
+    {
+      "type": "color",
+      "id": "bg_gradient_to",
+      "label": "Background Gradient To",
+      "default": "#faf5ff"
+    },
+    {
+      "type": "header",
+      "content": "Sidebar Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sidebar",
+      "label": "Show Sidebar",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "sidebar_width",
+      "label": "Sidebar Width",
+      "min": 200,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 280
+    },
+    {
+      "type": "color",
+      "id": "sidebar_bg",
+      "label": "Sidebar Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_radius",
+      "label": "Sidebar Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "sidebar_padding",
+      "label": "Sidebar Padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "sidebar_title",
+      "label": "Sidebar Title",
+      "default": "Categories"
+    },
+    {
+      "type": "color",
+      "id": "sidebar_title_color",
+      "label": "Sidebar Title Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "sidebar_title_size",
+      "label": "Sidebar Title Size",
+      "min": 14,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "sidebar_title_margin",
+      "label": "Sidebar Title Bottom Margin",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Category Button Styles"
+    },
+    {
+      "type": "color",
+      "id": "category_color",
+      "label": "Category Text Color",
+      "default": "#374151"
+    },
+    {
+      "type": "color",
+      "id": "hover_category_bg",
+      "label": "Category Hover Background",
+      "default": "#f3f4f6"
+    },
+    {
+      "type": "color",
+      "id": "active_category_bg",
+      "label": "Active Category Background",
+      "default": "#f43f5e"
+    },
+    {
+      "type": "color",
+      "id": "active_category_color",
+      "label": "Active Category Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "category_radius",
+      "label": "Category Button Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "CTA Box Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_box",
+      "label": "Show CTA Box",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "cta_margin_top",
+      "label": "CTA Top Margin",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "cta_padding_top",
+      "label": "CTA Top Padding",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "image_picker",
+      "id": "cta_image",
+      "label": "CTA Image"
+    },
+    {
+      "type": "range",
+      "id": "cta_image_radius",
+      "label": "CTA Image Radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "cta_title",
+      "label": "CTA Title",
+      "default": "What are your skin concerns?"
+    },
+    {
+      "type": "color",
+      "id": "cta_title_color",
+      "label": "CTA Title Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "cta_title_size",
+      "label": "CTA Title Size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "textarea",
+      "id": "cta_text",
+      "label": "CTA Description",
+      "default": "Which skincare products are best suited to help your skin concerns?"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "CTA Text Color",
+      "default": "#6b7280"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "CTA Button Text",
+      "default": "TAKE THE QUIZ"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "CTA Button Link"
+    },
+    {
+      "type": "color",
+      "id": "cta_button_bg",
+      "label": "CTA Button Background",
+      "default": "#dc2626"
+    },
+    {
+      "type": "color",
+      "id": "cta_button_color",
+      "label": "CTA Button Text Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "cta_button_radius",
+      "label": "CTA Button Radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "text",
+      "id": "cta_subtext",
+      "label": "CTA Subtext",
+      "default": "⏱️ LESS THAN ONE MINUTE"
+    },
+    {
+      "type": "color",
+      "id": "cta_subtext_color",
+      "label": "CTA Subtext Color",
+      "default": "#9ca3af"
+    },
+    {
+      "type": "header",
+      "content": "Content Area"
+    },
+    {
+      "type": "color",
+      "id": "content_bg",
+      "label": "Content Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "content_radius",
+      "label": "Content Border Radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Content Padding",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Search Settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show Search",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_label",
+      "label": "Search Label",
+      "default": "SEARCH OUR FAQ"
+    },
+    {
+      "type": "color",
+      "id": "search_label_color",
+      "label": "Search Label Color",
+      "default": "#374151"
+    },
+    {
+      "type": "range",
+      "id": "search_label_size",
+      "label": "Search Label Size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Search Placeholder",
+      "default": "Search questions..."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search_icon",
+      "label": "Show Search Icon",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "search_border_color",
+      "label": "Search Border Color",
+      "default": "#d1d5db"
+    },
+    {
+      "type": "color",
+      "id": "search_focus_color",
+      "label": "Search Focus Color",
+      "default": "#f43f5e"
+    },
+    {
+      "type": "range",
+      "id": "search_radius",
+      "label": "Search Border Radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "search_margin",
+      "label": "Search Bottom Margin",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Category Title"
+    },
+    {
+      "type": "color",
+      "id": "category_title_color",
+      "label": "Category Title Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "range",
+      "id": "category_title_size",
+      "label": "Category Title Size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "category_title_margin",
+      "label": "Category Title Bottom Margin",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "FAQ Styles"
+    },
+    {
+      "type": "select",
+      "id": "accordion_behavior",
+      "label": "Accordion Behavior",
+      "options": [
+        { "value": "single", "label": "Single (Close others when opening)" },
+        { "value": "multiple", "label": "Multiple (Allow multiple open)" }
+      ],
+      "default": "multiple"
+    },
+    {
+      "type": "color",
+      "id": "faq_border_color",
+      "label": "FAQ Border Color",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question Text Color",
+      "default": "#1f2937"
+    },
+    {
+      "type": "color",
+      "id": "question_hover_color",
+      "label": "Question Hover Color",
+      "default": "#f43f5e"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer Text Color",
+      "default": "#6b7280"
+    },
+    {
+      "type": "color",
+      "id": "chevron_color",
+      "label": "Chevron Icon Color",
+      "default": "#9ca3af"
+    },
+    {
+      "type": "header",
+      "content": "No Results"
+    },
+    {
+      "type": "text",
+      "id": "no_results_text",
+      "label": "No Results Text",
+      "default": "No questions found matching your search."
+    },
+    {
+      "type": "color",
+      "id": "no_results_color",
+      "label": "No Results Text Color",
+      "default": "#9ca3af"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "FAQ Category",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Create a category for organizing your FAQ items. Use the exact category name when adding FAQ items below."
+        },
+        {
+          "type": "text",
+          "id": "category_name",
+          "label": "Category Name",
+          "default": "General",
+          "info": "Use this exact name in FAQ items to link them to this category"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show Icon",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji or symbol)",
+          "info": "Example: 📋 or ★",
+          "default": "📋"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_count",
+          "label": "Show FAQ Count",
+          "default": true,
+          "info": "Displays number of FAQs in this category"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ Item",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "⚠️ IMPORTANT: Enter the exact category name below (case-insensitive). Example: if your category is 'Shipping', enter 'Shipping' or 'shipping'."
+        },
+        {
+          "type": "text",
+          "id": "parent_category",
+          "label": "Category Name",
+          "info": "Must match a category name exactly. Examples: General, Shipping, Returns, Products",
+          "placeholder": "Enter category name (e.g., General)"
+        },
+        {
+          "type": "textarea",
+          "id": "question",
+          "label": "Question",
+          "default": "Your question here?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Your answer here.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ with Categories",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "category_name": "General",
+            "icon": "📋",
+            "show_icon": true,
+            "show_count": true
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_name": "Shipping",
+            "icon": "🚚",
+            "show_icon": true,
+            "show_count": true
+          }
+        },
+        {
+          "type": "category",
+          "settings": {
+            "category_name": "Returns",
+            "icon": "↩️",
+            "show_icon": true,
+            "show_count": true
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "parent_category": "General",
+            "question": "How do I contact customer support?",
+            "answer": "<p>You can reach our customer support team via email at support@example.com or call us at 1-800-123-4567.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "parent_category": "Shipping",
+            "question": "What are your shipping options?",
+            "answer": "<p>We offer standard (5-7 days) and express (2-3 days) shipping options.</p>"
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "parent_category": "Returns",
+            "question": "What is your return policy?",
+            "answer": "<p>We accept returns within 30 days of purchase for a full refund.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
