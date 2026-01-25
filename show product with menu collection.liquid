@@ -1,0 +1,642 @@
+{% comment %}
+  Collection Menu Section
+  - Links to menu items
+  - Each menu item links to a collection
+  - Shows all products in grid layout (no scrolling)
+  - 3 cols (large), 2 cols (medium), 1 col (small)
+{% endcomment %}
+
+<style>
+  .collection-menu-section-{{ section.id }} {
+    --color-wine: #232323;
+    --color-bg: #FEFBF9;
+    --color-shadow: #6B7280;
+    --color-white: #FFFFFF;
+    background-color: var(--color-bg);
+    padding: {{ section.settings.padding_top_mobile }}px 0 {{ section.settings.padding_bottom_mobile }}px;
+  }
+  
+  @media (min-width: 768px) {
+    .collection-menu-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top_tablet }}px 0 {{ section.settings.padding_bottom_tablet }}px;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .collection-menu-section-{{ section.id }} {
+      padding: {{ section.settings.padding_top_desktop }}px 0 {{ section.settings.padding_bottom_desktop }}px;
+    }
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-container {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-header {
+    {% comment %} text-align: center; {% endcomment %}
+    margin-bottom: 40px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-title {
+    font-size: 48px;
+    font-weight: 600;
+    color: var(--color-wine);
+    margin-bottom: 30px;
+  }
+
+  /* Menu Navigation */
+  .collection-menu-section-{{ section.id }} .cms-menu-nav {
+    display: flex;
+    {% comment %} justify-content: center; {% endcomment %}
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-menu-btn {
+    background: var(--color-white);
+    color: #D59DAA;
+    padding: 12px 28px;
+    border-radius: 50px;
+    border: 2px solid #D59DAA;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-menu-btn:hover,
+  .collection-menu-section-{{ section.id }} .cms-menu-btn.active {
+   background: #D59DAA;
+    color: var(--color-white);
+    border: none;
+    box-shadow: 0 4px 12px rgba(41, 2, 23, 0.2);
+  }
+
+  /* Collection Content */
+  .collection-menu-section-{{ section.id }} .cms-collection-content {
+    display: none;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-collection-content.active {
+    display: block;
+  }
+
+  /* Products Grid - Responsive */
+  .collection-menu-section-{{ section.id }} .cms-products-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Medium screens: 2 columns */
+  @media (min-width: 768px) {
+    .collection-menu-section-{{ section.id }} .cms-products-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+  }
+
+  /* Large screens: 3 columns */
+  @media (min-width: 1024px) {
+    .collection-menu-section-{{ section.id }} .cms-products-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+  }
+
+  /* Product Card Styles */
+  .collection-menu-section-{{ section.id }} .cms-product-card {
+    background: #FDF5F1;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(41, 2, 23, 0.15);
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-image-wrapper {
+    position: relative;
+    padding-bottom: 100%;
+    overflow: hidden;
+    background: #f8f8f8;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-image-hover {
+    opacity: 0;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-card:hover .cms-product-image-hover {
+    opacity: 1;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--color-white);
+    color: var(--color-wine);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: 1px solid #D5D5D5;
+    z-index: 2;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-award-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 60px;
+    height: 60px;
+    z-index: 2;
+  }
+
+  @media (min-width: 1024px) {
+    .collection-menu-section-{{ section.id }} .cms-award-badge {
+      width: 80px;
+      height: 80px;
+    }
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-bogo-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #E91E63;
+    color: white;
+    padding: 20px 16px;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+    z-index: 3;
+    text-transform: uppercase;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 1024px) {
+    .collection-menu-section-{{ section.id }} .cms-product-content {
+      padding: 24px;
+    }
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-reviews {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 20px;
+    color: #EE6983;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-wine);
+    margin-bottom: 8px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .collection-menu-section-{{ section.id }} .cms-product-title {
+      font-size: 18px;
+    }
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-title a:hover {
+    color: #D4516D;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-description {
+    color: #3c3c3c;
+    font-size: 18px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (min-width: 1024px) {
+    .collection-menu-section-{{ section.id }} .cms-product-description {
+      font-size: 16px;
+    }
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-feature-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-feature-tag {
+    border: 1px solid var(--color-wine);
+    color: var(--color-wine);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-product-footer {
+    margin-top: auto;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-add-to-cart-form {
+    margin-bottom: 12px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-btn-add-cart {
+    width: 100%;
+    background: #D59DAA;
+    color: var(--color-white);
+    border: none;
+    padding: 0 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 50px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-btn-add-cart:hover:not(:disabled) {
+    background: #ffffff;
+    border: 1px solid #D59DAA;
+    color: #D59DAA;
+    transform: scale(1.02);
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-btn-add-cart:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-price-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-price-compare {
+    text-decoration: line-through;
+    opacity: 0.5;
+    font-weight: 300;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-promo-message {
+    text-align: center;
+    font-weight: 600;
+    color: #D59DAA;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-promo-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-shadow);
+  }
+
+  .collection-menu-section-{{ section.id }} .cms-empty-state p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+</style>
+
+<div class="collection-menu-section-{{ section.id }}">
+  <div class="cms-container">
+    {% if section.settings.title != blank %}
+      <div class="cms-header">
+        <h2 class="cms-title">{{ section.settings.title }}</h2>
+      </div>
+    {% endif %}
+
+    {% if section.settings.menu != blank %}
+      {% assign menu = linklists[section.settings.menu] %}
+      
+      {% if menu.links.size > 0 %}
+        <!-- Menu Navigation -->
+        <div class="cms-menu-nav">
+          {% for link in menu.links %}
+            <button class="cms-menu-btn {% if forloop.first %}active{% endif %}" 
+                    data-collection="{{ link.url | split: '/' | last }}">
+              {{ link.title }}
+            </button>
+          {% endfor %}
+        </div>
+
+        <!-- Collection Content -->
+        {% for link in menu.links %}
+          {% assign collection_handle = link.url | split: '/' | last %}
+          {% assign collection = collections[collection_handle] %}
+          
+          <div class="cms-collection-content {% if forloop.first %}active{% endif %}" 
+               data-collection="{{ collection_handle }}">
+            
+            {% if collection.products.size > 0 %}
+              <div class="cms-products-grid">
+                {% for product in collection.products %}
+                  <div class="cms-product-card">
+                    <div class="cms-product-image-wrapper">
+                      <a href="{{ product.url }}">
+                        {% if product.featured_image %}
+                          <img src="{{ product.featured_image | image_url: width: 900 }}" 
+                               alt="{{ product.featured_image.alt | escape }}" 
+                               class="cms-product-image"
+                               loading="lazy">
+                        {% else %}
+                          {{ 'product-1' | placeholder_svg_tag: 'cms-product-image' }}
+                        {% endif %}
+                        
+                        {% if product.images[1] %}
+                          <img src="{{ product.images[1] | image_url: width: 900 }}" 
+                               alt="{{ product.title | escape }}" 
+                               class="cms-product-image cms-product-image-hover"
+                               loading="lazy">
+                        {% endif %}
+                      </a>
+                      
+                      {% if product.available == false %}
+                        <span class="cms-badge">Sold Out</span>
+                      {% elsif product.compare_at_price > product.price %}
+                        <span class="cms-badge">Sale</span>
+                      {% endif %}
+                      
+                      {% if section.settings.show_bogo %}
+                        <div class="cms-bogo-badge">Buy 1<br>Get 1<br>FREE</div>
+                      {% endif %}
+                    </div>
+
+                    <div class="cms-product-content">
+                      {% if section.settings.show_reviews %}
+                        <div class="cms-reviews">
+                          ★★★★★ <span style="color: var(--color-wine);">4.7 / 5</span>
+                        </div>
+                      {% endif %}
+
+                      <h3 class="cms-product-title">
+                        <a href="{{ product.url }}">{{ product.title }}</a>
+                      </h3>
+
+                      {% if product.description != blank and section.settings.show_description %}
+                        <div class="cms-product-description">
+                          {{ product.description | strip_html | truncate: 100 }}
+                        </div>
+                      {% endif %}
+
+                      <div class="cms-product-footer">
+                        <form method="post" action="/cart/add" class="cms-add-to-cart-form">
+                          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                          
+                          <button type="submit" 
+                                  class="cms-btn-add-cart"
+                                  {% unless product.available %}disabled{% endunless %}>
+                            <span>
+                              {% if product.available %}
+                                ADD TO CART
+                              {% else %}
+                                SOLD OUT
+                              {% endif %}
+                            </span>
+                            <span class="cms-price-wrapper">
+                              {% if product.compare_at_price > product.price %}
+                                <span class="cms-price-compare">{{ product.compare_at_price | money }}</span>
+                              {% endif %}
+                              <span>{{ product.price | money }}</span>
+                            </span>
+                          </button>
+                        </form>
+
+                        {% if section.settings.promo_message != blank %}
+                          <div class="cms-promo-message">
+                           <svg fill="#D59DAA" width="400px" height="400px" viewBox="-3.2 -3.2 38.40 38.40" xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" transform="rotate(45)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round" stroke="#CCCCCC" stroke-width="0.8320000000000001"></g><g id="SVGRepo_iconCarrier"><path d="M22.48,6.82h-2.13v-1.22c0-2.4-1.95-4.35-4.35-4.35s-4.35,1.95-4.35,4.35v1.22h-2.13c-.41,0-.75,.34-.75,.75V30c0,.41,.34,.75,.75,.75h12.96c.41,0,.75-.34,.75-.75V7.57c0-.41-.34-.75-.75-.75Zm-9.33-1.22c0-1.57,1.28-2.85,2.85-2.85s2.85,1.28,2.85,2.85v1.22h-5.69v-1.22Zm8.58,23.65H10.27V8.32h11.46V29.25Z"></path><path d="M13.81,10.02h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M17.44,10.77c0,.41,.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75h-2.15c-.41,0-.75,.34-.75,.75Z"></path><path d="M13.81,13.23h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M20.34,13.23h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M13.81,16.43h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M20.34,16.43h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M13.81,19.64h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M20.34,19.64h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M13.81,22.84h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M20.34,22.84h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M13.81,26.05h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path><path d="M20.34,26.05h-2.15c-.41,0-.75,.34-.75,.75s.34,.75,.75,.75h2.15c.41,0,.75-.34,.75-.75s-.34-.75-.75-.75Z"></path></g></svg>{{ section.settings.promo_message }}
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <div class="cms-empty-state">
+                <p>No products found in this collection.</p>
+              </div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% else %}
+      <div class="cms-empty-state">
+        <p>Please select a menu in the section settings.</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sectionId = '{{ section.id }}';
+    const menuButtons = document.querySelectorAll(`.collection-menu-section-${sectionId} .cms-menu-btn`);
+    const collectionContents = document.querySelectorAll(`.collection-menu-section-${sectionId} .cms-collection-content`);
+    
+    menuButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const collectionHandle = this.getAttribute('data-collection');
+        
+        // Remove active class from all buttons and contents
+        menuButtons.forEach(btn => btn.classList.remove('active'));
+        collectionContents.forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        // Show corresponding collection content
+        const targetContent = document.querySelector(`.collection-menu-section-${sectionId} .cms-collection-content[data-collection="${collectionHandle}"]`);
+        if (targetContent) {
+          targetContent.classList.add('active');
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collection Menu Grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section Settings"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Light Therapy Devices"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "Select a menu where each item links to a collection"
+    },
+    {
+      "type": "header",
+      "content": "Product Display Options"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_reviews",
+      "label": "Show Reviews",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show Product Description",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bogo",
+      "label": "Show BOGO Badge",
+      "default": false,
+      "info": "Display 'Buy 1 Get 1 FREE' badge on all products"
+    },
+    {
+      "type": "text",
+      "id": "promo_message",
+      "label": "Promotional Message",
+      "default": "Buy One, Get One FREE!",
+      "info": "Shows below Add to Cart button"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Mobile)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Mobile)",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_top_tablet",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Tablet)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_tablet",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Tablet)",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top Padding (Desktop)",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom Padding (Desktop)",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Menu Grid",
+      "category": "Products"
+    }
+  ]
+}
+{% endschema %}
