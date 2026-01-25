@@ -1,0 +1,838 @@
+{% comment %} Testimonial Section Schema {% endcomment %}
+{% schema %}
+{
+  "name": "Testimonial Grid",
+  "settings": [
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Section Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Default Star Color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "color",
+      "id": "empty_star_color",
+      "label": "Empty Star Color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Section Title",
+      "default": "Customer Testimonials"
+    },
+    {
+      "type": "textarea",
+      "id": "section_desc",
+      "label": "Section Description",
+      "default": "What our happy customers say about our products"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "customer_image",
+          "label": "Customer Image",
+          "info": "Upload a small rounded customer image (recommended: 80x80px)"
+        },
+        {
+          "type": "range",
+          "id": "stars",
+          "label": "Star Rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "color",
+          "id": "custom_star_color",
+          "label": "Custom Star Color",
+          "info": "Leave empty to use default color"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Reviewer Name",
+          "default": "Customer Name"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Reviewer Details",
+          "default": "Verified Buyer"
+        },
+        {
+          "type": "richtext",
+          "id": "testimonial_text",
+          "label": "Testimonial Text",
+          "default": "<p>I absolutely love this product! It has exceeded my expectations.</p>"
+        },
+        {
+          "type": "color",
+          "id": "card_bg",
+          "label": "Card Background Color",
+          "default": "#f8f9fa"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonial Grid Section",
+      "category": "Content"
+    }
+  ]
+}
+{% endschema %}
+
+{% comment %} Testimonial Section Styles {% endcomment %}
+<style>
+  .testimonial-section {
+    background-color: {{ section.settings.section_bg }};
+    padding: 60px 20px;
+    transition: background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 50px;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .section-desc {
+    font-size: 2rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  .testimonials-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    position: relative;
+  }
+  
+  .testimonials-grid {
+    display: grid;
+    gap: 30px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 20px 0 40px;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .testimonials-grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .testimonial-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    scroll-snap-align: start;
+  }
+  
+  .testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+  
+  .stars-container {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+  }
+  
+  .star {
+    font-size: 2.2rem;
+  }
+  
+  .star.empty {
+    color: {{ section.settings.empty_star_color }};
+  }
+  
+  /* Customer Section Styles */
+  .customer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .customer-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .customer-image-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 2rem;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .reviewer-info {
+    flex: 1;
+  }
+  
+  .reviewer-name {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .reviewer-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    font-style: italic;
+  }
+  
+  .testimonial-text {
+    flex-grow: 1;
+    overflow-y: auto;
+    color: #444;
+    line-height: 1.7;
+    font-size: 1.5rem;
+    padding-right: 10px;
+  }
+  
+  .testimonial-text::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .testimonial-text::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+  
+  .testimonial-text::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 2px;
+  }
+  
+  /* Mobile Floating Navigation Buttons */
+  .mobile-scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #d59daa;
+    color: white;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .mobile-scroll-btn:hover {
+    background: #d59daa;
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .mobile-scroll-btn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+  
+  .mobile-scroll-btn.left {
+    left: 5px;
+  }
+  
+  .mobile-scroll-btn.right {
+    right: 5px;
+  }
+  
+  .scroll-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .scroll-btn {
+    background: #333;
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .scroll-btn:hover {
+    background: #555;
+    transform: scale(1.05);
+  }
+  
+  .scroll-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .card-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .card-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .card-indicator.active {
+    background: #333;
+  }
+  
+  {% comment %} Always Scroll Layout for All Devices {% endcomment %}
+  
+  {% comment %} Desktop Layout - Scroll activated when >6 cards {% endcomment %}
+  @media (min-width: 1024px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-flow: column;
+      overflow-x: auto;
+    }
+    
+    .testimonial-card {
+      min-width: 350px;
+      height: 300px;
+    }
+    
+    {% comment %} Static grid when ≤6 cards {% endcomment %}
+    .testimonials-grid[data-total-cards="1"] {
+      grid-template-columns: 1fr;
+      justify-content: center;
+    }
+    
+    .testimonials-grid[data-total-cards="2"] {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="3"] {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="4"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="5"] {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="6"] {
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="1"] .testimonial-card,
+    .testimonials-grid[data-total-cards="2"] .testimonial-card,
+    .testimonials-grid[data-total-cards="3"] .testimonial-card,
+    .testimonials-grid[data-total-cards="4"] .testimonial-card,
+    .testimonials-grid[data-total-cards="5"] .testimonial-card,
+    .testimonials-grid[data-total-cards="6"] .testimonial-card {
+      min-width: auto;
+      overflow: visible;
+    }
+  }
+  
+  {% comment %} Tablet Layout - Scroll activated when >4 cards {% endcomment %}
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-flow: column;
+      overflow-x: auto;
+    }
+    
+    .testimonial-card {
+      min-width: 300px;
+      height: 280px;
+    }
+    
+    {% comment %} Static grid when ≤4 cards {% endcomment %}
+    .testimonials-grid[data-total-cards="1"] {
+      grid-template-columns: 1fr;
+      justify-content: center;
+    }
+    
+    .testimonials-grid[data-total-cards="2"] {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="3"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="4"] {
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+    }
+    
+    .testimonials-grid[data-total-cards="1"] .testimonial-card,
+    .testimonials-grid[data-total-cards="2"] .testimonial-card,
+    .testimonials-grid[data-total-cards="3"] .testimonial-card,
+    .testimonials-grid[data-total-cards="4"] .testimonial-card {
+      min-width: auto;
+      overflow: visible;
+    }
+  }
+  
+  {% comment %} Mobile Layout - Always scroll {% endcomment %}
+  @media (max-width: 767px) {
+    .testimonials-container {
+      position: relative;
+      padding: 0 15px;
+    }
+    
+    .testimonials-grid {
+      grid-template-columns: repeat({{ section.blocks.size | default: 1 }}, calc(100vw - 60px));
+      grid-auto-flow: column;
+      overflow-x: auto;
+      padding: 10px 5px 40px;
+    }
+    
+    .testimonial-card {
+      min-width: calc(100vw - 60px);
+      height: 280px;
+      margin: 0 5px;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+    }
+    
+    .customer-image,
+    .customer-image-placeholder {
+      width: 50px;
+      height: 50px;
+    }
+    
+    /* Show mobile floating buttons only on mobile */
+    .mobile-scroll-btn {
+      display: flex;
+    }
+    
+    /* Hide desktop scroll controls on mobile */
+    .scroll-controls {
+      display: none;
+    }
+  }
+  
+  {% comment %} Additional responsive adjustments {% endcomment %}
+  @media (max-width: 480px) {
+    .testimonial-card {
+      padding: 20px;
+      height: 320px;
+    }
+    
+    .section-title {
+      font-size: 1.8rem;
+    }
+    
+    .customer {
+      gap: 12px;
+    }
+    
+    .mobile-scroll-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+    }
+    
+    .testimonials-grid {
+      grid-template-columns: repeat({{ section.blocks.size | default: 1 }}, calc(100vw - 50px));
+    }
+    
+    .testimonial-card {
+      min-width: calc(100vw - 50px);
+    }
+  }
+</style>
+
+{% comment %} Testimonial Section HTML {% endcomment %}
+<div class="testimonial-section" style="--section-bg: {{ section.settings.section_bg }}" id="testimonial-section-{{ section.id }}">
+  <div class="section-header">
+    <h2 class="section-title">{{ section.settings.section_title }}</h2>
+    <p class="section-desc">{{ section.settings.section_desc }}</p>
+  </div>
+  
+  <div class="testimonials-container">
+    {% assign total_cards = section.blocks.size %}
+    
+    {% comment %} Mobile Floating Buttons {% endcomment %}
+    <button class="mobile-scroll-btn left" onclick="scrollTestimonials('prev', '{{ section.id }}')" aria-label="Previous testimonials">
+      ←
+    </button>
+    
+    <button class="mobile-scroll-btn right" onclick="scrollTestimonials('next', '{{ section.id }}')" aria-label="Next testimonials">
+      →
+    </button>
+    
+    <div class="testimonials-grid" id="testimonialsGrid-{{ section.id }}" data-total-cards="{{ total_cards }}">
+      {% for block in section.blocks %}
+        {% assign card_bg = block.settings.card_bg | default: '#f8f9fa' %}
+        {% assign custom_star_color = block.settings.custom_star_color %}
+        {% assign default_star_color = section.settings.star_color %}
+        {% assign star_color = custom_star_color | default: default_star_color %}
+        
+        <div class="testimonial-card" style="--card-bg: {{ card_bg }}" {{ block.shopify_attributes }}>
+          {% comment %} Star Rating with Custom Color {% endcomment %}
+          <div class="stars-container">
+            {% assign stars = block.settings.stars | default: 5 %}
+            {% assign empty_stars = 5 | minus: stars %}
+            
+            {% for i in (1..stars) %}
+              <span class="star" style="color: {{ star_color }}">★</span>
+            {% endfor %}
+            
+            {% for i in (1..empty_stars) %}
+              <span class="star empty" style="color: {{ section.settings.empty_star_color }}">★</span>
+            {% endfor %}
+          </div>
+          
+          {% comment %} Customer Section with Image {% endcomment %}
+          <div class="customer">
+            {% if block.settings.customer_image %}
+              <img 
+                class="customer-image" 
+                src="{{ block.settings.customer_image | img_url: '80x80', crop: 'center' }}" 
+                alt="{{ block.settings.title }}" 
+                loading="lazy"
+              >
+            {% else %}
+              {% comment %} Generate initials from name as fallback {% endcomment %}
+              {% assign name_parts = block.settings.title | split: ' ' %}
+              {% assign initials = '' %}
+              {% for part in name_parts %}
+                {% assign initials = initials | append: part | slice: 0 %}
+                {% if forloop.index == 2 %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+              
+              <div class="customer-image-placeholder">
+                {{ initials | default: 'CU' }}
+              </div>
+            {% endif %}
+            
+            <div class="reviewer-info">
+              <h3 class="reviewer-name">{{ block.settings.title }}</h3>
+              <p class="reviewer-subtitle">{{ block.settings.subtitle }}</p>
+            </div>
+          </div>
+          
+          {% comment %} Testimonial Text {% endcomment %}
+          <div class="testimonial-text">
+            {{ block.settings.testimonial_text }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    {% comment %} Desktop Scroll Controls (show only when scrolling is active) {% endcomment %}
+    {% if total_cards > 6 %}
+      <div class="scroll-controls">
+        <button class="scroll-btn prev-btn" onclick="scrollTestimonials('prev', '{{ section.id }}')" aria-label="Previous testimonials">
+          ←
+        </button>
+        <button class="scroll-btn next-btn" onclick="scrollTestimonials('next', '{{ section.id }}')" aria-label="Next testimonials">
+          →
+        </button>
+      </div>
+      
+      {% comment %} Card Indicators {% endcomment %}
+      <div class="card-indicators" id="indicators-{{ section.id }}">
+        {% for block in section.blocks %}
+          <div class="card-indicator {% if forloop.first %}active{% endif %}" 
+               onclick="scrollToCard({{ forloop.index0 }}, '{{ section.id }}')"
+               aria-label="Go to testimonial {{ forloop.index }}">
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% comment %} JavaScript for Scroll Functionality {% endcomment %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initTestimonialSection('{{ section.id }}');
+  });
+  
+  function initTestimonialSection(sectionId) {
+    const grid = document.getElementById(`testimonialsGrid-${sectionId}`);
+    const totalCards = parseInt(grid.getAttribute('data-total-cards') || '0');
+    const indicators = document.getElementById(`indicators-${sectionId}`)?.children;
+    const prevBtn = document.querySelector(`#testimonial-section-${sectionId} .prev-btn`);
+    const nextBtn = document.querySelector(`#testimonial-section-${sectionId} .next-btn`);
+    const mobilePrevBtn = document.querySelector(`#testimonial-section-${sectionId} .mobile-scroll-btn.left`);
+    const mobileNextBtn = document.querySelector(`#testimonial-section-${sectionId} .mobile-scroll-btn.right`);
+    
+    // Only initialize scroll if there are enough cards to scroll
+    if (totalCards <= 6 && window.innerWidth >= 1024) return;
+    if (totalCards <= 4 && window.innerWidth >= 768 && window.innerWidth < 1024) return;
+    
+    let currentIndex = 0;
+    let autoHideTimeout;
+    
+    function calculateCardWidth() {
+      if (window.innerWidth >= 1024) {
+        // Desktop: show 3 columns
+        return (grid.offsetWidth / 3) - 30;
+      } else if (window.innerWidth >= 768) {
+        // Tablet: show 2 columns
+        return (grid.offsetWidth / 2) - 30;
+      } else {
+        // Mobile: full width
+        return grid.offsetWidth - 60; // Account for padding
+      }
+    }
+    
+    function updateControls() {
+      // Update indicators
+      if (indicators) {
+        Array.from(indicators).forEach((indicator, index) => {
+          indicator.classList.toggle('active', index === currentIndex);
+        });
+      }
+      
+      // Update button states for desktop
+      if (prevBtn) prevBtn.disabled = currentIndex === 0;
+      if (nextBtn) nextBtn.disabled = currentIndex === totalCards - 1;
+      
+      // Update button states for mobile
+      if (mobilePrevBtn) {
+        mobilePrevBtn.disabled = currentIndex === 0;
+        mobilePrevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+      }
+      
+      if (mobileNextBtn) {
+        mobileNextBtn.disabled = currentIndex === totalCards - 1;
+        mobileNextBtn.style.opacity = currentIndex === totalCards - 1 ? '0.5' : '1';
+      }
+      
+      // Auto-hide mobile buttons after scrolling
+      if (window.innerWidth <= 767) {
+        showMobileButtons();
+        clearTimeout(autoHideTimeout);
+        autoHideTimeout = setTimeout(hideMobileButtons, 2000);
+      }
+    }
+    
+    function showMobileButtons() {
+      if (mobilePrevBtn) mobilePrevBtn.style.opacity = '1';
+      if (mobileNextBtn) mobileNextBtn.style.opacity = '1';
+    }
+    
+    function hideMobileButtons() {
+      if (currentIndex === 0 && currentIndex === totalCards - 1) {
+        // Hide both if only one card or at extremes
+        if (mobilePrevBtn) mobilePrevBtn.style.opacity = '0';
+        if (mobileNextBtn) mobileNextBtn.style.opacity = '0';
+      } else if (currentIndex === 0) {
+        // Hide left button if at start
+        if (mobilePrevBtn) mobilePrevBtn.style.opacity = '0';
+        if (mobileNextBtn) mobileNextBtn.style.opacity = '1';
+      } else if (currentIndex === totalCards - 1) {
+        // Hide right button if at end
+        if (mobilePrevBtn) mobilePrevBtn.style.opacity = '1';
+        if (mobileNextBtn) mobileNextBtn.style.opacity = '0';
+      } else {
+        // Show both if in middle
+        if (mobilePrevBtn) mobilePrevBtn.style.opacity = '1';
+        if (mobileNextBtn) mobileNextBtn.style.opacity = '1';
+      }
+    }
+    
+    // Scroll to specific card
+    window.scrollToCard = function(index, id) {
+      if (id !== sectionId) return;
+      currentIndex = index;
+      const cardWidth = calculateCardWidth();
+      const scrollPosition = index * (cardWidth + 30); // Add gap
+      
+      grid.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+      updateControls();
+    };
+    
+    // Scroll testimonials
+    window.scrollTestimonials = function(direction, id) {
+      if (id !== sectionId) return;
+      
+      if (direction === 'next' && currentIndex < totalCards - 1) {
+        currentIndex++;
+      } else if (direction === 'prev' && currentIndex > 0) {
+        currentIndex--;
+      }
+      
+      const cardWidth = calculateCardWidth();
+      const scrollPosition = currentIndex * (cardWidth + 30); // Add gap
+      
+      grid.scrollTo({
+        left: scrollPosition,
+        behavior: 'smooth'
+      });
+      updateControls();
+    };
+    
+    // Update on scroll
+    grid.addEventListener('scroll', function() {
+      const cardWidth = calculateCardWidth();
+      currentIndex = Math.round(grid.scrollLeft / (cardWidth + 30));
+      updateControls();
+    });
+    
+    // Touch events for mobile
+    let startX = 0;
+    let isScrolling = false;
+    
+    grid.addEventListener('touchstart', function(e) {
+      startX = e.touches[0].clientX;
+      isScrolling = true;
+      showMobileButtons();
+    });
+    
+    grid.addEventListener('touchmove', function() {
+      if (isScrolling) {
+        showMobileButtons();
+        clearTimeout(autoHideTimeout);
+      }
+    });
+    
+    grid.addEventListener('touchend', function() {
+      isScrolling = false;
+      autoHideTimeout = setTimeout(hideMobileButtons, 2000);
+    });
+    
+    // Hover events for mobile buttons
+    if (mobilePrevBtn) {
+      mobilePrevBtn.addEventListener('mouseenter', showMobileButtons);
+      mobilePrevBtn.addEventListener('mouseleave', function() {
+        autoHideTimeout = setTimeout(hideMobileButtons, 1000);
+      });
+    }
+    
+    if (mobileNextBtn) {
+      mobileNextBtn.addEventListener('mouseenter', showMobileButtons);
+      mobileNextBtn.addEventListener('mouseleave', function() {
+        autoHideTimeout = setTimeout(hideMobileButtons, 1000);
+      });
+    }
+    
+    // Initial update
+    updateControls();
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      // Recalculate and update scroll position
+      const cardWidth = calculateCardWidth();
+      const scrollPosition = currentIndex * (cardWidth + 30);
+      grid.scrollTo({
+        left: scrollPosition,
+        behavior: 'auto'
+      });
+      updateControls();
+    });
+    
+    // Auto-hide scroll controls if not needed
+    function checkScrollNeeded() {
+      const container = grid.closest('.testimonials-container');
+      const scrollControls = container.querySelector('.scroll-controls');
+      const indicators = container.querySelector('.card-indicators');
+      
+      if (window.innerWidth >= 1024 && totalCards <= 6) {
+        if (scrollControls) scrollControls.style.display = 'none';
+        if (indicators) indicators.style.display = 'none';
+        if (mobilePrevBtn) mobilePrevBtn.style.display = 'none';
+        if (mobileNextBtn) mobileNextBtn.style.display = 'none';
+      } else if (window.innerWidth >= 768 && totalCards <= 4) {
+        if (scrollControls) scrollControls.style.display = 'none';
+        if (indicators) indicators.style.display = 'none';
+        if (mobilePrevBtn) mobilePrevBtn.style.display = 'none';
+        if (mobileNextBtn) mobileNextBtn.style.display = 'none';
+      } else {
+        if (scrollControls) scrollControls.style.display = 'flex';
+        if (indicators) indicators.style.display = 'flex';
+        
+        // Show/hide mobile buttons based on screen size
+        if (window.innerWidth <= 767) {
+          if (mobilePrevBtn) mobilePrevBtn.style.display = 'flex';
+          if (mobileNextBtn) mobileNextBtn.style.display = 'flex';
+          hideMobileButtons(); // Start with hidden buttons
+        } else {
+          if (mobilePrevBtn) mobilePrevBtn.style.display = 'none';
+          if (mobileNextBtn) mobileNextBtn.style.display = 'none';
+        }
+      }
+    }
+    
+    checkScrollNeeded();
+    window.addEventListener('resize', checkScrollNeeded);
+    
+    // Initial hide for mobile buttons
+    if (window.innerWidth <= 767) {
+      setTimeout(hideMobileButtons, 1000);
+    }
+  }
+</script>
