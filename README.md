@@ -15,3 +15,7 @@ image with icon and text: <img width="1782" height="688" alt="image" src="https:
 custom faqs with group tabs: <img width="1718" height="914" alt="image" src="https://github.com/user-attachments/assets/40383b02-f251-451b-8559-d1dbea63f8a8" />
 two col blog section: <img width="1867" height="753" alt="image" src="https://github.com/user-attachments/assets/acd7ef29-e777-4b9b-b8ca-977c2e2557a3" />
 
+
+
+==============ALL SECTION TEST ON Minimogh THEME===================
+Compair tabel: <img width="1632" height="589" alt="image" src="https://github.com/user-attachments/assets/0d1e80f6-be8f-465b-8bcf-4c297df3760a" />
