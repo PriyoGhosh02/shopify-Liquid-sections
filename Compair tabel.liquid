@@ -1,0 +1,191 @@
+{% assign sid = section.id %}
+
+<section id="gjc-{{ sid }}" class="gjc">
+  <div class="gjc__wrap">
+
+    {% if section.settings.title != blank %}
+      <h2 class="gjc__title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.subtitle != blank %}
+      <p class="gjc__subtitle">{{ section.settings.subtitle }}</p>
+    {% endif %}
+
+    <div class="gjc__table">
+      <!-- LEFT column -->
+      <div class="gjc__labels">
+        <div class="gjc__labels-head">
+          <span class="gjc__labels-text">{{ section.settings.labels_title }}</span>
+        </div>
+        {% for block in section.blocks %}
+          <div class="gjc__row">
+            <div class="gjc__label" {{ block.shopify_attributes }}>{{ block.settings.label }}</div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- MIDDLE column (ONE SCOOP) -->
+      <div class="gjc__card gjc__card--primary">
+        {% if section.settings.primary_logo %}
+          <div class="gjc__logo">
+            <img src="{{ section.settings.primary_logo | image_url: width: 300 }}" alt="One Scoop Logo" loading="lazy">
+          </div>
+        {% endif %}
+        <div class="gjc__card-head">{{ section.settings.primary_title }}</div>
+        {% for block in section.blocks %}
+          <div class="gjc__row">
+            <div class="gjc__cell">
+              {% if block.settings.primary_has %}
+                <span class="gjc__icon gjc__icon--check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><path d="M9.2 16.2 5.8 12.8l1.5-1.5 1.9 1.9 5.6-5.6 1.5 1.5z" fill="#000"/></svg>
+                </span>
+              {% else %}
+                <span class="gjc__icon gjc__icon--cross" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><path d="M8 8l8 8M16 8l-8 8" stroke="#0b1a3f" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- RIGHT column (MULTI-OPT) -->
+      <div class="gjc__card gjc__card--secondary">
+        {% if section.settings.secondary_logo %}
+          <div class="gjc__logo">
+            <img src="{{ section.settings.secondary_logo | image_url: width: 300 }}" alt="Multi Opt Logo" loading="lazy">
+          </div>
+        {% endif %}
+        <div class="gjc__card-head">{{ section.settings.secondary_title }}</div>
+        {% for block in section.blocks %}
+          <div class="gjc__row">
+            <div class="gjc__cell">
+              {% if block.settings.secondary_has %}
+                <span class="gjc__icon gjc__icon--check" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><path d="M9.2 16.2 5.8 12.8l1.5-1.5 1.9 1.9 5.6-5.6 1.5 1.5z" fill="#fff"/></svg>
+                </span>
+              {% else %}
+                <span class="gjc__icon gjc__icon--cross" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"></circle><path d="M8 8l8 8M16 8l-8 8" stroke="#0b1a3f" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #gjc-{{ sid }}{
+      --panel: {{ section.settings.card_color | default: '#0b1a3f' }}; /* Card background color */
+      --gold:  {{ section.settings.gold | default: '#d59a3f' }};     /* Checkmark color */
+      --text:  inherit;  /* inherit theme text color */
+      --muted: #7b8496;
+      --label: inherit;  /* inherit theme font color */
+      --line: rgba(0,0,0,.12);
+      --row-h: 66px;
+      --radius: 12px;
+      --maxw: 1100px;
+      font-family: inherit; /* inherit theme font */
+    }
+
+    #gjc-{{ sid }} .gjc__wrap{max-width:var(--maxw);margin:0 auto;padding:36px 16px}
+    #gjc-{{ sid }} .gjc__title{margin:0 0 6px;font-weight:600;color:var(--text);text-align:center;font-size:clamp(24px,3.2vw,36px)}
+    {% comment %} #gjc-{{ sid }} .gjc__subtitle{margin:0 0 18px;color:var(--muted);text-align:center} {% endcomment %}
+ #gjc-{{ sid }} .gjc__subtitle{margin:0 0 18px;color:black;text-align:center}
+
+    #gjc-{{ sid }} .gjc__table{
+      display:grid;
+      grid-template-columns: 1.05fr 1fr 1fr;
+      column-gap:22px;
+      align-items:start;
+    }
+
+    /* LEFT column */
+    #gjc-{{ sid }} .gjc__labels-head{
+      padding:18px;
+      border-bottom:2px solid var(--line);
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:var(--text);
+      text-align:left;
+    }
+    #gjc-{{ sid }} .gjc__labels-text{display:inline-block;margin-top:12px}
+    #gjc-{{ sid }} .gjc__row{min-height:var(--row-h);display:flex;align-items:center;border-bottom:1px solid var(--line)}
+    #gjc-{{ sid }} .gjc__label{padding:0 18px;text-align:left;color:var(--label)}
+
+    /* CARDS */
+    #gjc-{{ sid }} .gjc__card{background:var(--panel);color:#fff;border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+    #gjc-{{ sid }} .gjc__logo{text-align:center;padding:16px 0}
+    #gjc-{{ sid }} .gjc__logo img{max-height:60px;width:auto}
+    #gjc-{{ sid }} .gjc__card-head{
+      font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:center;
+      padding:25px 6px;margin:0;border-bottom:1px solid rgba(255,255,255,.18)
+    }
+    #gjc-{{ sid }} .gjc__card .gjc__row{border-bottom:1px solid rgba(255,255,255,.18);justify-content:center}
+    #gjc-{{ sid }} .gjc__cell{display:flex;align-items:center;justify-content:center;width:100%}
+
+    /* ICONS */
+    #gjc-{{ sid }} .gjc__icon{display:inline-flex;width:30px;height:30px}
+    #gjc-{{ sid }} .gjc__icon svg{width:100%;height:100%}
+    #gjc-{{ sid }} .gjc__icon--check circle{fill:var(--gold)}
+    #gjc-{{ sid }} .gjc__icon--cross circle{fill:#ffffff}
+
+    /* MOBILE */
+    @media (max-width: 600px){
+      #gjc-{{ sid }} .gjc__table{grid-template-columns: 0.9fr 0.7fr 0.6fr; column-gap:12px}
+      #gjc-{{ sid }} .gjc__label{padding:0 14px;font-size:13px;line-height:1.3}
+      #gjc-{{ sid }} .gjc__row{min-height:56px}
+      #gjc-{{ sid }} .gjc__card-head{padding:26px 8px;font-size:12px}
+      #gjc-{{ sid }} .gjc__icon{width:26px;height:26px}
+      #gjc-{{ sid }} .gjc__logo img{max-height:50px}
+    }
+  </style>
+</section>
+
+{% schema %}
+{
+  "name": "Green Juice Compare",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Every Scoop Of Green Juice Delivers" },
+    { "type": "text", "id": "subtitle", "label": "Subheading", "default": "Discover our nutritional value" },
+
+    { "type": "text", "id": "labels_title", "label": "Left header", "default": "Contains in" },
+
+    { "type": "image_picker", "id": "primary_logo", "label": "One Scoop Logo" },
+    { "type": "text", "id": "primary_title", "label": "Middle header", "default": "One scoop" },
+
+    { "type": "image_picker", "id": "secondary_logo", "label": "Multi Opt Logo" },
+    { "type": "text", "id": "secondary_title", "label": "Right header", "default": "Multi-opt" },
+
+    { "type": "color", "id": "card_color", "label": "Card background color", "default": "#0b1a3f" },
+    { "type": "color", "id": "gold", "label": "Gold check", "default": "#d59a3f" }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Wholefood-based nutrients" },
+        { "type": "checkbox", "id": "primary_has", "label": "One Scoop ✓", "default": true },
+        { "type": "checkbox", "id": "secondary_has", "label": "Others ✓", "default": false }
+      ]
+    }
+  ],
+  "max_blocks": 20,
+  "presets": [
+    {
+      "name": "Green Juice Compare",
+      "blocks": [
+        { "type": "row", "settings": { "label": "Wholefood-based nutrients", "primary_has": true, "secondary_has": false } },
+        { "type": "row", "settings": { "label": "Multivitamins (A, B, C)", "primary_has": true, "secondary_has": false } },
+        { "type": "row", "settings": { "label": "Fiber & Algaes", "primary_has": true, "secondary_has": false } },
+        { "type": "row", "settings": { "label": "Probiotics (Gut bacteria)", "primary_has": true, "secondary_has": false } },
+        { "type": "row", "settings": { "label": "No added fillers", "primary_has": true, "secondary_has": false } },
+        { "type": "row", "settings": { "label": "No added sugar, dairy & gluten", "primary_has": true, "secondary_has": false } }
+      ]
+    }
+  ]
+}
+{% endschema %}
