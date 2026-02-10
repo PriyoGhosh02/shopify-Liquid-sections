@@ -1,0 +1,194 @@
+{%- style -%}
+  .mask-scroll-container-{{ section.id }} {
+    height: {{ section.settings.zoom_speed }}vh;
+    position: relative;
+    background-color: {{ section.settings.bg_color }};
+  }
+
+
+  .mask-sticky-frame {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  .mask-bg-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+  }
+
+
+  .mask-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centered grouping */
+    gap: 5vh; /* Controlled vertical spacing */
+    background-color: {{ section.settings.overlay_color }};
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+
+
+  .mask-text-element {
+    font-family: "Arial Black", Impact, sans-serif !important;
+    font-size: 8vw; /* Slightly smaller base for better fit */
+    font-weight: 900;
+    color: #fff !important;
+    background: transparent !important;
+    margin: 0;
+    white-space: nowrap;
+    text-transform: uppercase;
+    transform-origin: center center;
+    will-change: transform;
+    line-height: 1;
+  }
+{%- endstyle -%}
+
+
+<div class="mask-scroll-container-{{ section.id }}" id="ScrollWrapper-{{ section.id }}">
+  <div class="mask-sticky-frame">
+   
+    {%- if section.settings.image != blank -%}
+      <img src="{{ section.settings.image | img_url: '2000x' }}" class="mask-bg-image" alt="Background Reveal">
+    {%- else -%}
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'mask-bg-image' }}
+    {%- endif -%}
+
+
+    <div class="mask-layer" id="MaskLayer-{{ section.id }}">
+      <div class="mask-text-element zoom-text-{{ section.id }}">{{ section.settings.text_1 }}</div>
+      <div class="mask-text-element zoom-text-{{ section.id }}">{{ section.settings.text_2 }}</div>
+      <div class="mask-text-element zoom-text-{{ section.id }}">{{ section.settings.text_3 }}</div>
+    </div>
+
+
+  </div>
+</div>
+
+
+<script>
+  (function() {
+    const wrapper = document.getElementById('ScrollWrapper-{{ section.id }}');
+    const texts = document.querySelectorAll('.zoom-text-{{ section.id }}');
+    const layer = document.getElementById('MaskLayer-{{ section.id }}');
+   
+    let ticking = false;
+
+
+    function updateElements() {
+      const rect = wrapper.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const totalScrollable = rect.height - windowHeight;
+     
+      let progress = -rect.top / totalScrollable;
+      progress = Math.min(Math.max(progress, 0), 1);
+
+
+      // REDUCED ZOOM: Capped at 15 instead of 100 for a smoother,
+      // less "extra" feel while still creating a portal effect.
+      const scale = 1 + (progress * 15);
+     
+      texts.forEach(el => {
+        el.style.transform = `scale(${scale})`;
+      });
+
+
+      // Simple Fade logic
+      if (progress > 0.8) {
+        const fadeProgress = (progress - 0.8) / 0.2;
+        layer.style.opacity = 1 - fadeProgress;
+      } else {
+        layer.style.opacity = 1;
+      }
+
+
+      ticking = false;
+    }
+
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateElements);
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+</script>
+
+
+{% schema %}
+{
+  "name": "Balanced Triple Reveal",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Revealed Image"
+    },
+    {
+      "type": "text",
+      "id": "text_1",
+      "label": "Top Line",
+      "default": "MODERN"
+    },
+    {
+      "type": "text",
+      "id": "text_2",
+      "label": "Middle Line",
+      "default": "ELEGANT"
+    },
+    {
+      "type": "text",
+      "id": "text_3",
+      "label": "Bottom Line",
+      "default": "SIMPLE"
+    },
+    {
+      "type": "range",
+      "id": "zoom_speed",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "vh",
+      "label": "Scroll Depth",
+      "default": 400
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section Background",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Balanced Triple Reveal"
+    }
+  ]
+}
+{% endschema %}
+
