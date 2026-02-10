@@ -19,3 +19,5 @@ two col blog section: <img width="1867" height="753" alt="image" src="https://gi
 
 ==============ALL SECTION TEST ON Minimogh THEME===================
 Compair tabel: <img width="1632" height="589" alt="image" src="https://github.com/user-attachments/assets/0d1e80f6-be8f-465b-8bcf-4c297df3760a" />
+title text broken on scrolling: <img width="1903" height="871" alt="image" src="https://github.com/user-attachments/assets/f11541a8-ccd1-4be5-92dc-a11d0e0f1453" />
+
