@@ -14,6 +14,8 @@ image with progress: <img width="1655" height="851" alt="image" src="https://git
 image with icon and text: <img width="1782" height="688" alt="image" src="https://github.com/user-attachments/assets/718ecf4f-3784-4e19-b54f-95145401727f" />
 custom faqs with group tabs: <img width="1718" height="914" alt="image" src="https://github.com/user-attachments/assets/40383b02-f251-451b-8559-d1dbea63f8a8" />
 two col blog section: <img width="1867" height="753" alt="image" src="https://github.com/user-attachments/assets/acd7ef29-e777-4b9b-b8ca-977c2e2557a3" />
+Point progress section: <img width="1883" height="455" alt="image" src="https://github.com/user-attachments/assets/114e2a2c-eeaf-4e99-a400-8e7444e82209" />
+
 
 
 
