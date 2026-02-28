@@ -1,0 +1,19 @@
+/* Custom Cursor: cursor_peace_final for Studd */
+* {
+  cursor: url("https://cdn.shopify.com/s/files/1/0790/1170/9177/files/Untitled_design_4.png?v=1770728774")
+      16 16,
+    auto !important;
+} /* Specific cursor for clickable links and buttons */
+a,
+button,
+.button,
+.link,
+[role="button"],
+summary,
+input,
+label,
+select {
+  cursor: url("https://cdn.shopify.com/s/files/1/0790/1170/9177/files/Untitled_design_4.png?v=1770728774")
+      16 16,
+    pointer !important;
+}
