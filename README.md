@@ -1,5 +1,5 @@
 ==============ALL SECTION TEST ON ELLA THEME===================
-
+custom cursor.css  
 Promotional sell banner:  <img width="1890" height="115" alt="image" src="https://github.com/user-attachments/assets/30305877-be95-412d-a18d-3f8892e1d6fe" />
 one side Video banner:  <img width="1862" height="675" alt="image" src="https://github.com/user-attachments/assets/f15f2287-4158-4cb6-a85f-12721d68d633" />
 custom Main product section: <img width="1793" height="841" alt="image" src="https://github.com/user-attachments/assets/a73ed732-9e28-4fa3-9a53-e2b66312b29e" />
@@ -16,6 +16,7 @@ custom faqs with group tabs: <img width="1718" height="914" alt="image" src="htt
 two col blog section: <img width="1867" height="753" alt="image" src="https://github.com/user-attachments/assets/acd7ef29-e777-4b9b-b8ca-977c2e2557a3" />
 Point progress section: <img width="1883" height="455" alt="image" src="https://github.com/user-attachments/assets/114e2a2c-eeaf-4e99-a400-8e7444e82209" />
 custom mega menu on hover show all PD under Collection: <img width="1885" height="666" alt="image" src="https://github.com/user-attachments/assets/84a92489-4d67-4ee4-8b84-284c27d02fa5" />
+lottie animation: <img width="1812" height="729" alt="image" src="https://github.com/user-attachments/assets/926be493-3fdf-492e-ad66-ddea07db7e68" />
 
 
 
